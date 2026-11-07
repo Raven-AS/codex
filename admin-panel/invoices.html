@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Look up boost invoice metadata by purchase ID.">
+<title>Invoice Metadata - Admin Panel</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#fff;--ink:#000;--bg:#f1f1f1;--wash:#f7f7f7;--hover:#f0f0f0;--line:#e8e8e8;--line-strong:#d8d8d8;--muted:#6b6b6b;--muted-2:#8f8f8f;--font:"Instrument Sans","Helvetica Neue",Helvetica,"Segoe UI",sans-serif;--mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;--sidebar-w:248px}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}body{margin:0;color:var(--ink);background:var(--bg);font:15px/1.5 var(--font);-webkit-font-smoothing:antialiased}a{color:inherit}button,input{font:inherit}button{cursor:pointer}[hidden]{display:none!important}h1,h2,h3,p{margin:0}h1{font-size:clamp(26px,3vw,33px);line-height:1.12;letter-spacing:-.025em}h2{font-size:19px;line-height:1.25;letter-spacing:-.015em}.mono{font-family:var(--mono);font-size:.92em}.app{display:flex;gap:18px;min-height:100vh;padding:18px}
+.sidebar{position:sticky;top:18px;display:flex;flex:0 0 var(--sidebar-w);flex-direction:column;height:calc(100vh - 36px);overflow:hidden;border:1px solid var(--line);border-radius:22px;background:var(--paper);z-index:20}.sidebar-brand{display:flex;align-items:center;gap:11px;padding:22px;text-decoration:none}.brand-mark{display:grid;width:30px;height:30px;place-items:center;border-radius:9px;background:var(--ink);color:#fff}.brand-word{font-size:16.5px;font-weight:700;letter-spacing:.06em}.brand-word span{color:var(--muted-2);font-weight:500}.sidebar-nav{flex:1;overflow-y:auto;padding:4px 14px 14px}.nav-label{padding:16px 10px 8px;color:var(--muted-2);font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}.nav-item{display:flex;align-items:center;gap:11px;width:100%;margin-bottom:3px;padding:10.5px 12px;border:0;border-radius:12px;background:transparent;color:var(--ink);font-size:14.5px;text-align:left;text-decoration:none}.nav-item:hover,.nav-item.active{background:var(--hover)}.nav-item.active{font-weight:700}.sidebar-foot{padding:15px 22px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}.sidebar-overlay{display:none;position:fixed;inset:0;background:#0006;z-index:15}.sidebar.open~.sidebar-overlay{display:block}
+.main{display:flex;flex:1;min-width:0;flex-direction:column;gap:18px}.topbar{display:flex;align-items:center;justify-content:space-between;min-height:62px;padding:11px 16px;border-radius:18px;background:var(--paper)}.topbar-tag{color:var(--muted-2);font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase}.user-chip{display:flex;align-items:center;gap:12px}.avatar{display:grid;width:38px;height:38px;place-items:center;border-radius:50%;background:var(--ink);color:#fff;font-size:13px;font-weight:700}.who b,.who span{display:block}.who b{font-size:14px;line-height:1.2}.who span{color:var(--muted);font-size:11px;font-weight:600;letter-spacing:.1em}.menu-btn{display:none!important}.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}.sub{max-width:720px;margin-top:7px;color:var(--muted);font-size:14.5px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border:1px solid transparent;border-radius:999px;background:transparent;color:var(--ink);font-size:14px;font-weight:600;text-decoration:none;white-space:nowrap}.btn:focus-visible,.icon-btn:focus-visible,.nav-item:focus-visible{outline:2px solid var(--ink);outline-offset:2px}.btn-primary{background:var(--ink);color:#fff}.btn-outline{border-color:var(--line-strong);background:var(--paper)}.btn-outline:hover{border-color:var(--ink);background:var(--wash)}.btn[disabled]{cursor:wait;opacity:.55}.icon-btn{display:inline-grid;width:38px;height:38px;place-items:center;border:1px solid var(--line-strong);border-radius:50%;background:var(--paper)}.icon-btn svg{width:18px;height:18px}
+.card{border-radius:20px;background:var(--paper)}.lookup{display:grid;grid-template-columns:minmax(220px,1fr) auto;align-items:end;gap:14px;padding:20px}.field{display:flex;min-width:0;flex-direction:column;gap:7px}.field-label{color:var(--muted);font-size:11.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase}.input{width:100%;min-height:46px;padding:0 14px;border:1px solid var(--line-strong);border-radius:12px;background:var(--paper);color:var(--ink)}.input:focus{outline:2px solid var(--ink);outline-offset:1px}.notice{padding:14px 17px;border:1px solid var(--line);border-radius:14px;background:var(--wash);color:var(--muted);font-size:13px}.notice strong{color:var(--ink)}.result-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:19px 22px;border-bottom:1px solid var(--line)}.result-head p{margin-top:4px;color:var(--muted);font-size:13px}.result-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;padding:20px}.meta-card{min-width:0;padding:16px;border:1px solid var(--line);border-radius:14px}.meta-card h3{margin:0 0 9px;color:var(--muted);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase}.meta-row{display:flex;justify-content:space-between;gap:14px;padding:6px 0;font-size:13.5px}.meta-row span:first-child{color:var(--muted)}.meta-row span:last-child{text-align:right;overflow-wrap:anywhere}.status{display:inline-flex;min-height:25px;align-items:center;padding:0 10px;border:1px solid var(--line-strong);border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}.status-issued,.status-paid{border-color:var(--ink);background:var(--ink);color:#fff}.status-draft{border-style:dashed}.result-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}.state{display:flex;min-height:220px;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:28px;text-align:center}.state h2{font-size:17px}.state p{max-width:550px;color:var(--muted)}.state.error{color:#8e1c14}.spin{width:22px;height:22px;border:2px solid var(--line-strong);border-top-color:var(--ink);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.external-link{font-weight:600;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:900px){.app{gap:12px;padding:12px}.sidebar{flex-basis:220px}}@media(max-width:700px){.app{display:block;padding:10px}.sidebar{position:fixed;inset:10px auto 10px 10px;width:min(290px,calc(100vw - 42px));height:auto;max-height:calc(100dvh - 20px);transform:translateX(calc(-100% - 14px));transition:transform .2s ease}.sidebar.open{transform:translateX(0)}.main{gap:13px}.menu-btn{display:inline-grid!important}.topbar{gap:10px;padding:9px 12px}.lookup{grid-template-columns:1fr;padding:15px}.lookup .btn{width:100%}.result-grid{grid-template-columns:1fr;padding:14px}.result-head{padding:16px}.result-foot{align-items:flex-start;flex-direction:column}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <a class="sidebar-brand" href="admin_dashboard.html"><span class="brand-mark" aria-hidden="true">A</span><span class="brand-word">ADMIN<span>/PANEL</span></span></a>
+    <nav class="sidebar-nav" aria-label="Admin navigation">
+      <div class="nav-label">Menu</div><a class="nav-item" href="admin_dashboard.html">Dashboard</a><a class="nav-item" href="users.html">Users</a><a class="nav-item" href="lawyer_verifications.html">Lawyer Verification</a>
+      <div class="nav-label">Catalog</div><a class="nav-item" href="practice_areas.html">Practice Areas</a><a class="nav-item" href="jurisdictions.html">Jurisdictions</a><a class="nav-item" href="courts.html">Courts</a>
+      <div class="nav-label">Verification</div><a class="nav-item" href="lawyer_verifications.html">Verification Queue</a><a class="nav-item" href="verification_history.html">Verification History</a>
+      <div class="nav-label">Moderation</div><a class="nav-item" href="content_reports.html">Content Reports</a>
+      <div class="nav-label">Boost management</div><a class="nav-item" href="boost_plans.html">Boost Plans</a><a class="nav-item" href="boost_purchases.html">Boost Purchases</a><a class="nav-item active" href="invoices.html" aria-current="page">Invoice Metadata</a>
+      <div class="nav-label">Support</div><a class="nav-item" href="support_tickets.html">Support Tickets</a>
+      <div class="nav-label">General</div><button class="nav-item" id="logoutBtn" type="button">Logout</button>
+    </nav>
+    <div class="sidebar-foot">Secure admin session</div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <main class="main">
+    <header class="topbar"><button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><span class="topbar-tag">Boost management</span><div class="user-chip"><span class="avatar" id="userAvatar">A</span><span class="who"><b id="userName">admin</b><span id="userRole">ADMIN</span></span></div></header>
+    <section class="page-head"><div><h1>Invoice metadata</h1><p class="sub">Look up the authoritative invoice metadata attached to a boost purchase. Invoice records are retrieved by boost purchase ID.</p></div></section>
+    <div class="notice" role="note">Metadata lookup only. Invoice listing and an admin PDF download endpoint are not available. The existing PDF URL is shown only when supplied by the backend; PDF preview, generation, printing and file handling remain outside this admin page.</div>
+    <form class="card lookup" id="lookupForm">
+      <div class="field"><label class="field-label" for="boostId">Boost purchase ID</label><input class="input" id="boostId" type="number" min="1" step="1" required inputmode="numeric" placeholder="Enter purchase ID"></div>
+      <button class="btn btn-primary" id="lookupBtn" type="submit">Look up invoice</button>
+    </form>
+    <section class="card" id="resultCard" aria-label="Invoice metadata" aria-live="polite">
+      <div class="state" role="status"><h2>Enter a boost purchase ID</h2><p>Use a purchase ID from Boost Purchases to check whether invoice metadata is available.</p></div>
+    </section>
+  </main>
+</div>
+<script>
+(function(){
+  "use strict";
+  var API="http://localhost:18081/api/admin/v1",TOKEN="adminAccessToken",USERNAME="adminUsername",ROLE="adminRole";
+  var state={loading:false,request:0};var $=function(id){return document.getElementById(id);};
+  function esc(value){return String(value==null?"":value).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+  function clearSession(){localStorage.removeItem(TOKEN);localStorage.removeItem(USERNAME);localStorage.removeItem(ROLE);}
+  function logout(){clearSession();window.location.replace("admin_login.html");}
+  function ApiError(message,status){this.name="ApiError";this.message=message;this.status=status||0;}
+  ApiError.prototype=Object.create(Error.prototype);ApiError.prototype.constructor=ApiError;
+  async function api(url){var headers={},auth=localStorage.getItem(TOKEN);if(auth)headers.Authorization="Bearer "+auth;var response;try{response=await fetch(url,{headers:headers});}catch(error){throw new ApiError("Cannot reach the API server. Check that the backend is running.",0);}if(response.status===401){clearSession();window.location.replace("admin_login.html");throw new ApiError("Session expired. Please sign in again.",401);}var payload=null;try{payload=await response.json();}catch(error){payload=null;}if(!response.ok){var message=payload&&(payload.message||payload.error);if(response.status===403)message="Access denied. Admin permission required.";else if(response.status===404)message="No invoice metadata was found for this boost purchase.";else if(response.status===409)message="The request conflicts with a changed record. Refresh and try again.";throw new ApiError(message||"Request failed with status "+response.status+".",response.status);}if(payload&&payload.success===false)throw new ApiError(payload.message||"The API could not complete the request.",response.status);return payload&&Object.prototype.hasOwnProperty.call(payload,"data")?payload.data:payload;}
+  function date(value){if(!value)return"—";var d=new Date(value);return Number.isNaN(d.getTime())?"—":d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})+", "+d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});}
+  function money(amount,currency){if(amount==null)return"—";var value=Number(amount);return esc(currency||"")+" "+(Number.isFinite(value)?value.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):esc(amount));}
+  function status(value){var label=String(value||"—"),modifier=label==="ISSUED"||label==="PAID"?"status-"+label.toLowerCase():label==="DRAFT"?"status-draft":"";return'<span class="status '+modifier+'">'+esc(label.replace(/_/g," "))+"</span>";}
+  function safePdfUrl(value){if(!value)return null;try{var url=new URL(value);return url.protocol==="https:"?url.href:null;}catch(error){return null;}}
+  function row(label,value){return'<div class="meta-row"><span>'+esc(label)+'</span><span>'+esc(value==null||value===""?"—":value)+"</span></div>";}
+  function card(title,content){return'<section class="meta-card"><h3>'+esc(title)+"</h3>"+content+"</section>";}
+  function showState(title,message,isError,retry){$("resultCard").innerHTML='<div class="state'+(isError?" error":"")+'" '+(isError?'role="alert"':'role="status"')+'><h2>'+esc(title)+'</h2><p>'+esc(message||"")+"</p>"+(retry?'<button class="btn btn-outline" type="button" id="retryBtn">Retry lookup</button>':"")+"</div>";var button=$("retryBtn");if(button)button.addEventListener("click",lookup);}
+  function render(invoice,boostId,boost){
+    if(!invoice||typeof invoice!=="object")throw new ApiError("The API returned an unexpected invoice record.",0);
+    var pdf=safePdfUrl(invoice.pdfUrl);
+    var invoiceCard=card("Invoice",row("Invoice ID",invoice.id)+row("Invoice number",invoice.invoiceNumber)+row("Status",String(invoice.status||"—").replace(/_/g," "))+row("Issued",date(invoice.issuedAt))+row("Amount",money(invoice.amount,invoice.currency)));
+    var related=card("Related records",row("Boost purchase ID",invoice.boostId==null?boostId:invoice.boostId)+row("Payment ID",invoice.paymentId)+row("Lawyer",boost&&boost.lawyerName)+row("Lawyer user ID",boost&&boost.lawyerId)+row("Plan",boost&&boost.planName));
+    var pdfContent=pdf?'<a class="external-link" href="'+esc(pdf)+'" target="_blank" rel="noopener noreferrer">Open backend-provided invoice PDF in a new tab</a>':'<p class="muted">No usable HTTPS PDF URL was provided by the backend.</p>';
+    $("resultCard").innerHTML='<header class="result-head"><div><h2>Invoice metadata</h2><p>Boost purchase #'+esc(invoice.boostId==null?boostId:invoice.boostId)+'</p></div><button class="icon-btn" id="refreshInvoiceBtn" type="button" aria-label="Refresh invoice metadata"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 12a8.6 8.6 0 1 1-2.5-6.1"/><path d="M20.6 3.5v6h-6"/></svg></button></header><div class="result-grid">'+invoiceCard+related+card("Existing PDF link",pdfContent)+'</div><footer class="result-foot"><span>Metadata returned by the admin invoice-detail API.</span><a class="btn btn-outline" href="boost_purchases.html">Back to Boost Purchases</a></footer>';
+    $("refreshInvoiceBtn").addEventListener("click",lookup);
+  }
+  function setLoading(value){state.loading=value;$("lookupBtn").disabled=value;$("boostId").disabled=value;}
+  async function lookup(event){
+    if(event)event.preventDefault();if(state.loading)return;
+    var raw=$("boostId").value.trim();if(!/^[1-9]\d*$/.test(raw)){showState("Enter a valid purchase ID","Boost purchase ID must be a positive whole number.",true,false);$("boostId").focus();return;}
+    var id=encodeURIComponent(raw),request=++state.request;setLoading(true);showState("Looking up invoice","Fetching invoice metadata from the admin API.");
+    try{
+      var invoice=await api(API+"/boosts/"+id+"/invoice");if(request!==state.request)return;
+      var boost=null;
+      try{boost=await api(API+"/boosts/"+id);}catch(boostError){if(boostError.status===401||boostError.status===403)throw boostError;}
+      if(request!==state.request)return;render(invoice,raw,boost);
+    }
+    catch(error){if(request===state.request)showState(error.status===404?"Invoice not available":"Could not load invoice metadata",error.message,true,error.status!==401&&error.status!==403);}
+    finally{if(request===state.request)setLoading(false);}
+  }
+  function initShell(){
+    var name=localStorage.getItem(USERNAME)||"admin",parts=name.trim().split(/\s+/);$("userName").textContent=name;$("userRole").textContent=localStorage.getItem(ROLE)||"ADMIN";$("userAvatar").textContent=((parts[0]||"A")[0]+(parts.length>1?parts[parts.length-1][0]:"")).toUpperCase();
+    $("logoutBtn").addEventListener("click",logout);var sidebar=$("sidebar");$("menuBtn").addEventListener("click",function(){sidebar.classList.add("open");});$("sidebarOverlay").addEventListener("click",function(){sidebar.classList.remove("open");});$("lookupForm").addEventListener("submit",lookup);
+    var params=new URLSearchParams(location.search),id=params.get("boostId");if(id){$("boostId").value=id;lookup();}
+  }
+  initShell();
+})();
+</script>
+</body>
+</html>

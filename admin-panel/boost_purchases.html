@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Review lawyer boost purchases and payment records.">
+<title>Boost Purchases - Admin Panel</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#fff;--ink:#000;--bg:#f1f1f1;--wash:#f7f7f7;--hover:#f0f0f0;--line:#e8e8e8;--line-strong:#d8d8d8;--muted:#6b6b6b;--muted-2:#8f8f8f;--font:"Instrument Sans","Helvetica Neue",Helvetica,"Segoe UI",sans-serif;--mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;--sidebar-w:248px}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}body{margin:0;color:var(--ink);background:var(--bg);font:15px/1.5 var(--font);-webkit-font-smoothing:antialiased}a{color:inherit}button,input,select{font:inherit}button{cursor:pointer}[hidden]{display:none!important}h1,h2,p{margin:0}h1{font-size:clamp(26px,3vw,33px);line-height:1.12;letter-spacing:-.025em}h2{font-size:19px;line-height:1.25;letter-spacing:-.015em}.muted{color:var(--muted)}.mono{font-family:var(--mono);font-size:.92em}
+.app{display:flex;gap:18px;min-height:100vh;padding:18px}.sidebar{position:sticky;top:18px;display:flex;flex:0 0 var(--sidebar-w);flex-direction:column;height:calc(100vh - 36px);overflow:hidden;border:1px solid var(--line);border-radius:22px;background:var(--paper);z-index:20}.sidebar-brand{display:flex;align-items:center;gap:11px;padding:22px;text-decoration:none}.brand-mark{display:grid;width:30px;height:30px;place-items:center;border-radius:9px;background:var(--ink);color:#fff}.brand-word{font-size:16.5px;font-weight:700;letter-spacing:.06em}.brand-word span{color:var(--muted-2);font-weight:500}.sidebar-nav{flex:1;overflow-y:auto;padding:4px 14px 14px}.nav-label{padding:16px 10px 8px;color:var(--muted-2);font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}.nav-item{display:flex;align-items:center;gap:11px;width:100%;margin-bottom:3px;padding:10.5px 12px;border:0;border-radius:12px;background:transparent;color:var(--ink);font-size:14.5px;text-align:left;text-decoration:none}.nav-item:hover,.nav-item.active{background:var(--hover)}.nav-item.active{font-weight:700}.sidebar-foot{display:flex;align-items:center;gap:9px;padding:15px 22px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}.sidebar-overlay{display:none;position:fixed;inset:0;background:#0006;z-index:15}.sidebar.open~.sidebar-overlay{display:block}
+.main{display:flex;flex:1;min-width:0;flex-direction:column;gap:18px}.topbar{display:flex;align-items:center;justify-content:space-between;min-height:62px;padding:11px 16px;border-radius:18px;background:var(--paper)}.topbar-tag{color:var(--muted-2);font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase}.user-chip{display:flex;align-items:center;gap:12px}.avatar{display:grid;width:38px;height:38px;place-items:center;border:1px solid var(--ink);border-radius:50%;background:var(--ink);color:var(--paper);font-size:13px;font-weight:700}.who b,.who span{display:block}.who b{font-size:14px;line-height:1.2}.who span{color:var(--muted);font-size:11px;font-weight:600;letter-spacing:.1em}.menu-btn{display:none!important}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}.sub{max-width:680px;margin-top:7px;color:var(--muted);font-size:14.5px}.page-actions{display:flex;gap:10px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border:1px solid transparent;border-radius:999px;background:transparent;color:var(--ink);font-size:14px;font-weight:600;text-decoration:none;white-space:nowrap}.btn:focus-visible,.icon-btn:focus-visible,.nav-item:focus-visible{outline:2px solid var(--ink);outline-offset:2px}.btn-primary{background:var(--ink);color:var(--paper)}.btn-outline{border-color:var(--line-strong);background:var(--paper)}.btn-outline:hover{border-color:var(--ink);background:var(--wash)}.btn[disabled]{cursor:wait;opacity:.55}.icon-btn{display:inline-grid;width:38px;height:38px;place-items:center;border:1px solid var(--line-strong);border-radius:50%;background:var(--paper)}.card{border-radius:20px;background:var(--paper)}.notice{padding:14px 17px;border:1px solid var(--line);border-radius:14px;background:var(--wash);color:var(--muted);font-size:13px}.notice strong{color:var(--ink)}.toolbar{display:grid;grid-template-columns:repeat(5,minmax(130px,1fr));align-items:end;gap:12px;padding:18px}.field{display:flex;min-width:0;flex-direction:column;gap:7px}.field-label{color:var(--muted);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}.input,.select{width:100%;min-height:44px;padding:0 12px;border:1px solid var(--line-strong);border-radius:11px;background:var(--paper);color:var(--ink)}.input:focus,.select:focus{outline:2px solid var(--ink);outline-offset:1px}.filter-actions{display:flex;align-items:center;gap:8px}.filter-error{grid-column:1/-1;color:#8e1c14;font-size:13px}
+.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;text-align:left}th{padding:13px 15px;border-bottom:1px solid var(--line);color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;white-space:nowrap}td{padding:15px;border-bottom:1px solid var(--line);vertical-align:middle}tbody tr:last-child td{border-bottom:0}tbody tr:hover{background:#fafafa}.cell-primary{display:block;font-weight:600}.cell-secondary{display:block;margin-top:3px;color:var(--muted);font-size:12px}.badge{display:inline-flex;min-height:25px;align-items:center;padding:0 9px;border:1px solid var(--line-strong);border-radius:999px;background:var(--paper);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}.badge-good{border-color:var(--ink);background:var(--ink);color:var(--paper)}.badge-bad{border-style:dashed;background:repeating-linear-gradient(135deg,#fff 0 4px,#ededed 4px 6px)}.badge-pending{border-style:dashed}.small-btn{min-height:35px;padding:0 12px;font-size:12px}.table-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}.pager{display:flex;align-items:center;gap:8px}.pager .btn{min-height:36px;padding:0 12px;font-size:13px}.state{display:flex;min-height:220px;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:28px;text-align:center}.state h2{font-size:17px}.state p{max-width:520px;color:var(--muted)}.state.error{color:#8e1c14}.spin{width:22px;height:22px;border:2px solid var(--line-strong);border-top-color:var(--ink);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+dialog{width:min(650px,calc(100% - 28px));max-height:calc(100dvh - 28px);padding:0;border:1px solid var(--line);border-radius:20px;background:var(--paper);color:var(--ink);box-shadow:0 24px 80px #0003}dialog::backdrop{background:#0007}.dialog-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding:22px 24px;border-bottom:1px solid var(--line)}.dialog-head p{margin-top:5px;color:var(--muted);font-size:13px}.dialog-content{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:22px 24px}.detail-card{min-width:0;padding:14px;border:1px solid var(--line);border-radius:13px}.detail-card.full{grid-column:1/-1}.detail-card h3{margin:0 0 9px;color:var(--muted);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase}.detail-item{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:13px}.detail-item span:first-child{color:var(--muted)}.detail-item span:last-child{text-align:right;overflow-wrap:anywhere}.dialog-state{grid-column:1/-1;min-height:130px;display:flex;align-items:center;justify-content:center;gap:10px;color:var(--muted)}.detail-error{color:#8e1c14}.dialog-foot{display:flex;justify-content:flex-end;padding:14px 24px;border-top:1px solid var(--line)}
+@media(max-width:1120px){.toolbar{grid-template-columns:repeat(3,minmax(130px,1fr))}}@media(max-width:900px){.app{gap:12px;padding:12px}.sidebar{flex-basis:220px}.toolbar{grid-template-columns:repeat(2,minmax(130px,1fr))}}@media(max-width:700px){.app{display:block;padding:10px}.sidebar{position:fixed;inset:10px auto 10px 10px;width:min(290px,calc(100vw - 42px));height:auto;max-height:calc(100dvh - 20px);transform:translateX(calc(-100% - 14px));transition:transform .2s ease}.sidebar.open{transform:translateX(0)}.main{gap:13px}.menu-btn{display:inline-grid!important}.topbar{gap:10px;padding:9px 12px}.page-head{align-items:flex-start}.page-actions{width:100%}.page-actions .btn{flex:1}.toolbar{grid-template-columns:1fr 1fr;padding:14px}.filter-actions{grid-column:1/-1}.filter-actions .btn{flex:1}.filter-error{grid-column:1/-1}.table-foot{align-items:flex-start;flex-direction:column}.pager{width:100%;justify-content:space-between}.dialog-content{grid-template-columns:1fr;padding:16px}.detail-card.full,.dialog-state{grid-column:auto}.dialog-head,.dialog-foot{padding:16px}}@media(max-width:420px){.toolbar{grid-template-columns:1fr}.filter-actions,.filter-error{grid-column:auto}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <a class="sidebar-brand" href="admin_dashboard.html"><span class="brand-mark" aria-hidden="true">A</span><span class="brand-word">ADMIN<span>/PANEL</span></span></a>
+    <nav class="sidebar-nav" aria-label="Admin navigation">
+      <div class="nav-label">Menu</div><a class="nav-item" href="admin_dashboard.html">Dashboard</a><a class="nav-item" href="users.html">Users</a><a class="nav-item" href="lawyer_verifications.html">Lawyer Verification</a>
+      <div class="nav-label">Catalog</div><a class="nav-item" href="practice_areas.html">Practice Areas</a><a class="nav-item" href="jurisdictions.html">Jurisdictions</a><a class="nav-item" href="courts.html">Courts</a>
+      <div class="nav-label">Verification</div><a class="nav-item" href="lawyer_verifications.html">Verification Queue</a><a class="nav-item" href="verification_history.html">Verification History</a>
+      <div class="nav-label">Moderation</div><a class="nav-item" href="content_reports.html">Content Reports</a>
+      <div class="nav-label">Boost management</div><a class="nav-item" href="boost_plans.html">Boost Plans</a><a class="nav-item active" href="boost_purchases.html" aria-current="page">Boost Purchases</a><a class="nav-item" href="invoices.html">Invoice Metadata</a>
+      <div class="nav-label">Support</div><a class="nav-item" href="support_tickets.html">Support Tickets</a>
+      <div class="nav-label">General</div><button class="nav-item" id="logoutBtn" type="button">Logout</button>
+    </nav>
+    <div class="sidebar-foot">Secure admin session</div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <main class="main">
+    <header class="topbar"><button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><span class="topbar-tag">Boost management</span><div class="user-chip"><span class="avatar" id="userAvatar">A</span><span class="who"><b id="userName">admin</b><span id="userRole">ADMIN</span></span></div></header>
+    <section class="page-head"><div><h1>Boost purchases</h1><p class="sub">Review boost purchase status, lawyer references, payment records and expiry dates.</p></div><div class="page-actions"><button class="btn btn-outline" id="refreshBtn" type="button">Refresh</button></div></section>
+    <div class="notice" role="note">This page is read-only. Payment verification is not an admin API action, and the admin response does not expose a bKash transaction ID. The backend applies purchase filters after loading each database page, so filtered results and totals may be incomplete; use the unfiltered list when reviewing all purchases.</div>
+    <form class="card toolbar" id="filterForm">
+      <div class="field"><label class="field-label" for="lawyerId">Lawyer user ID</label><input class="input" id="lawyerId" type="number" min="1" step="1" inputmode="numeric" placeholder="Any lawyer"></div>
+      <div class="field"><label class="field-label" for="boostStatus">Boost status</label><select class="select" id="boostStatus"><option value="">All statuses</option><option>PENDING_PAYMENT</option><option>SCHEDULED</option><option>ACTIVE</option><option>EXPIRED</option><option>CANCELLED</option><option>SUSPENDED</option></select></div>
+      <div class="field"><label class="field-label" for="paymentStatus">Payment status</label><select class="select" id="paymentStatus"><option value="">All statuses</option><option>INITIATED</option><option>PENDING</option><option>COMPLETED</option><option>FAILED</option><option>CANCELLED</option></select></div>
+      <div class="field"><label class="field-label" for="fromDate">Purchased from</label><input class="input" id="fromDate" type="datetime-local"></div>
+      <div class="field"><label class="field-label" for="toDate">Purchased to</label><input class="input" id="toDate" type="datetime-local"></div>
+      <div id="filterError" class="filter-error" role="alert" hidden></div>
+      <div class="filter-actions"><button class="btn btn-primary" type="submit">Apply filters</button><button class="btn btn-outline" id="clearFiltersBtn" type="button">Clear</button></div>
+    </form>
+    <section class="card" aria-label="Boost purchase list">
+      <div class="table-wrap"><table><thead><tr><th scope="col">Purchase</th><th scope="col">Lawyer</th><th scope="col">Plan</th><th scope="col">Amount</th><th scope="col">Payment</th><th scope="col">Boost / expiry</th><th scope="col"><span class="sr-only">Details</span></th></tr></thead><tbody id="purchaseRows"><tr><td colspan="7"><div class="state" role="status"><span class="spin" aria-hidden="true"></span><h2>Loading purchases</h2></div></td></tr></tbody></table></div>
+      <footer class="table-foot"><span id="resultsSummary" aria-live="polite"></span><nav class="pager" id="pagination" aria-label="Purchase pages"></nav></footer>
+    </section>
+  </main>
+</div>
+<dialog id="purchaseDialog" aria-labelledby="detailTitle">
+  <div class="dialog-head"><div><h2 id="detailTitle">Purchase details</h2><p id="detailSubtitle">Boost and payment metadata returned by the admin API.</p></div><button class="icon-btn" id="closeDetailsBtn" type="button" aria-label="Close dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+  <div class="dialog-content" id="detailContent"><div class="dialog-state" role="status"><span class="spin" aria-hidden="true"></span><span>Loading purchase details</span></div></div>
+  <div class="dialog-foot"><button class="btn btn-outline" id="doneDetailsBtn" type="button">Close</button></div>
+</dialog>
+<script>
+(function(){
+  "use strict";
+  var API="http://localhost:18081/api/admin/v1",TOKEN="adminAccessToken",USERNAME="adminUsername",ROLE="adminRole",SIZE=20;
+  var BOOST_STATUSES=["PENDING_PAYMENT","SCHEDULED","ACTIVE","EXPIRED","CANCELLED","SUSPENDED"],PAYMENT_STATUSES=["INITIATED","PENDING","COMPLETED","FAILED","CANCELLED"];
+  var state={page:0,totalPages:0,totalElements:0,purchases:[],loading:false,request:0,detailRequest:0,detailId:null};
+  var $=function(id){return document.getElementById(id);};
+  function esc(value){return String(value==null?"":value).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+  function clearSession(){localStorage.removeItem(TOKEN);localStorage.removeItem(USERNAME);localStorage.removeItem(ROLE);}
+  function logout(){clearSession();window.location.replace("admin_login.html");}
+  function ApiError(message,status){this.name="ApiError";this.message=message;this.status=status||0;}
+  ApiError.prototype=Object.create(Error.prototype);ApiError.prototype.constructor=ApiError;
+  async function api(url){
+    var headers={};var auth=localStorage.getItem(TOKEN);if(auth)headers.Authorization="Bearer "+auth;
+    var response;try{response=await fetch(url,{headers:headers});}catch(e){throw new ApiError("Cannot reach the API server. Check that the backend is running.",0);}
+    if(response.status===401){clearSession();window.location.replace("admin_login.html");throw new ApiError("Session expired. Please sign in again.",401);}
+    var payload=null;try{payload=await response.json();}catch(e){payload=null;}
+    if(!response.ok){var message=payload&&(payload.message||payload.error);if(response.status===403)message="Access denied. Admin permission required.";else if(response.status===404)message="The requested purchase or payment record was not found.";else if(response.status===409)message="The request conflicts with a changed purchase. Refresh and try again.";throw new ApiError(message||"Request failed with status "+response.status+".",response.status);}
+    if(payload&&payload.success===false)throw new ApiError(payload.message||"The API could not complete the request.",response.status);
+    return payload&&Object.prototype.hasOwnProperty.call(payload,"data")?payload.data:payload;
+  }
+  function date(value){if(!value)return"—";var d=new Date(value);return Number.isNaN(d.getTime())?"—":d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})+", "+d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});}
+  function money(amount,currency){if(amount==null)return"—";var number=Number(amount);return esc(currency||"")+" "+(Number.isFinite(number)?number.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):esc(amount));}
+  function badge(status,type){var value=String(status||"UNKNOWN");var good=(type==="payment"&&value==="COMPLETED")||(type==="boost"&&value==="ACTIVE");var bad=["FAILED","CANCELLED","EXPIRED","SUSPENDED"].indexOf(value)>=0;var pending=["INITIATED","PENDING","PENDING_PAYMENT","SCHEDULED"].indexOf(value)>=0;return'<span class="badge '+(good?"badge-good":bad?"badge-bad":pending?"badge-pending":"")+'">'+esc(value.replace(/_/g," "))+"</span>";}
+  function setState(title,message,error){$("purchaseRows").innerHTML='<tr><td colspan="7"><div class="state'+(error?" error":"")+'" '+(error?'role="alert"':'role="status"')+'><h2>'+esc(title)+'</h2><p>'+esc(message||"")+'</p>'+(error?'<button class="btn btn-outline" id="retryBtn" type="button">Retry</button>':"")+"</div></td></tr>";$("resultsSummary").textContent="";$("pagination").replaceChildren();var retry=$("retryBtn");if(retry)retry.addEventListener("click",loadPurchases);}
+  function render(){
+    if(!state.purchases.length){setState("No purchases found","No boost purchases matched this page and its current filters.");$("resultsSummary").textContent=state.totalElements?"No purchases on this page.":"No purchases found.";return;}
+    $("purchaseRows").innerHTML=state.purchases.map(function(item){var id=esc(item.boostId),payment=item.paymentStatus,reference=item.paymentReference;return'<tr><td><span class="cell-primary mono">#'+id+'</span><span class="cell-secondary">'+date(item.createdAt)+'</span></td><td><span class="cell-primary">'+esc(item.lawyerName||"Lawyer")+'</span><span class="cell-secondary">Lawyer user ID '+esc(item.lawyerId==null?"—":item.lawyerId)+'</span></td><td><span class="cell-primary">'+esc(item.planName||"—")+'</span><span class="cell-secondary">'+esc(item.durationDays==null?"—":item.durationDays)+" days</span></td><td>"+money(item.amount,item.currency)+'</td><td>'+badge(payment,"payment")+(reference?'<span class="cell-secondary mono">'+esc(reference)+"</span>":"")+'</td><td>'+badge(item.boostStatus,"boost")+'<span class="cell-secondary">Expires '+date(item.endsAt||item.expiredAt)+'</span></td><td><button class="btn btn-outline small-btn" type="button" data-details="'+id+'">Details</button></td></tr>';}).join("");
+    var first=state.page*SIZE+1,last=first+state.purchases.length-1;$("resultsSummary").textContent="Page "+(state.page+1)+" of "+state.totalPages+" · "+first+"–"+last+" of "+state.totalElements+" purchases";
+    $("pagination").innerHTML='<button class="btn btn-outline" type="button" data-page="'+(state.page-1)+'" '+(state.page<=0?"disabled":"")+'>Previous</button><span>Page '+(state.page+1)+" / "+state.totalPages+'</span><button class="btn btn-outline" type="button" data-page="'+(state.page+1)+'" '+(state.page+1>=state.totalPages?"disabled":"")+'>Next</button>';
+  }
+  function filterValues(){
+    var lawyer=$("lawyerId").value.trim(),boost=$("boostStatus").value,payment=$("paymentStatus").value,from=$("fromDate").value,to=$("toDate").value;
+    if(lawyer&&(!/^[1-9]\d*$/.test(lawyer))){throw new Error("Lawyer user ID must be a positive whole number.");}
+    if(from&&to&&new Date(from)>new Date(to)){throw new Error("The start date must be before or equal to the end date.");}
+    if(boost&&BOOST_STATUSES.indexOf(boost)<0)throw new Error("Choose a supported boost status.");
+    if(payment&&PAYMENT_STATUSES.indexOf(payment)<0)throw new Error("Choose a supported payment status.");
+    return{lawyer:lawyer,boost:boost,payment:payment,from:from,to:to};
+  }
+  function queryUrl(){
+    var filters=filterValues(),params=new URLSearchParams({page:String(state.page),size:String(SIZE)});
+    if(filters.lawyer)params.set("lawyerId",filters.lawyer);if(filters.boost)params.set("status",filters.boost);if(filters.payment)params.set("paymentStatus",filters.payment);
+    if(filters.from)params.set("fromDate",filters.from+":00");if(filters.to)params.set("toDate",filters.to+":00");
+    return API+"/boosts?"+params.toString();
+  }
+  function setLoading(value){state.loading=value;$("refreshBtn").disabled=value;Array.prototype.forEach.call(document.querySelectorAll("#filterForm input,#filterForm select,#filterForm button"),function(control){control.disabled=value;});if(value)setState("Loading purchases","Fetching purchase data from the admin API.");}
+  async function loadPurchases(){
+    if(state.loading)return;var url;try{url=queryUrl();$("filterError").hidden=true;$("filterError").textContent="";}catch(error){$("filterError").textContent=error.message;$("filterError").hidden=false;return;}
+    var request=++state.request;setLoading(true);
+    try{var data=await api(url);if(request!==state.request)return;if(!data||!Array.isArray(data.content))throw new ApiError("The API returned an unexpected purchase page.",0);state.purchases=data.content;state.page=Number.isInteger(data.page)?data.page:state.page;state.totalPages=Number(data.totalPages)||0;state.totalElements=Number(data.totalElements)||0;render();}
+    catch(error){if(request===state.request)setState("Could not load purchases",error.message,true);}
+    finally{if(request===state.request){state.loading=false;$("refreshBtn").disabled=false;Array.prototype.forEach.call(document.querySelectorAll("#filterForm input,#filterForm select,#filterForm button"),function(control){control.disabled=false;});}}
+  }
+  function field(label,value){return'<div class="detail-item"><span>'+esc(label)+'</span><span>'+esc(value==null||value===""?"—":value)+"</span></div>";}
+  function detailCard(title,contents,full){return'<section class="detail-card'+(full?" full":"")+'"><h3>'+esc(title)+"</h3>"+contents+"</section>";}
+  function detailState(message,error){$("detailContent").innerHTML='<div class="dialog-state'+(error?" detail-error":"")+'" '+(error?'role="alert"':'role="status"')+'>'+(error?"":'<span class="spin" aria-hidden="true"></span>')+"<span>"+esc(message)+"</span></div>";}
+  async function openDetails(id){
+    state.detailId=id;var request=++state.detailRequest;$("detailTitle").textContent="Purchase #"+id;$("detailSubtitle").textContent="Boost and payment metadata returned by the admin API.";detailState("Loading purchase details");$("purchaseDialog").showModal();
+    try{
+      var item=await api(API+"/boosts/"+encodeURIComponent(id));if(request!==state.detailRequest)return;
+      if(!item||typeof item!=="object")throw new ApiError("The API returned an unexpected purchase detail.",0);
+      var boost=detailCard("Boost purchase",field("Purchase ID",item.boostId)+field("Lawyer",item.lawyerName)+field("Lawyer user ID",item.lawyerId)+field("Plan",item.planName)+field("Plan duration",item.durationDays==null?"—":item.durationDays+" days")+field("Amount",money(item.amount,item.currency))+field("Boost status",String(item.boostStatus||"—").replace(/_/g," ")),false);
+      var timeline=detailCard("Lifecycle",field("Purchased",date(item.createdAt))+field("Starts",date(item.startsAt))+field("Activated",date(item.activatedAt))+field("Expires",date(item.endsAt))+field("Expired",date(item.expiredAt)),false);
+      var invoice=item.invoiceId?detailCard("Invoice metadata",field("Invoice ID",item.invoiceId)+field("Invoice number",item.invoiceNumber)+field("Status",item.invoiceStatus)+'<div class="detail-item"><span>Lookup</span><span><a href="invoices.html?boostId='+encodeURIComponent(item.boostId)+'">View invoice metadata</a></span></div>',true):detailCard("Invoice metadata",'<p class="muted">No invoice is associated with this purchase.</p>',true);
+      var detailBase=boost+timeline+invoice;
+      $("detailContent").innerHTML=detailBase+detailCard("Payment record",'<div class="dialog-state" role="status"><span class="spin" aria-hidden="true"></span><span>Loading payment metadata</span></div>',true);
+      try{
+        var payment=await api(API+"/boosts/"+encodeURIComponent(id)+"/payment");if(request!==state.detailRequest)return;
+        var paymentRows=field("Status",payment.status)+field("Method",payment.provider)+field("Amount",money(payment.amount,payment.currency))+field("Payment reference",payment.paymentReference)+field("Merchant invoice",payment.merchantInvoiceNumber)+field("Payment created",date(payment.createdAt))+field("Verified",date(payment.verifiedAt));
+        $("detailContent").innerHTML=detailBase+detailCard("Payment record",paymentRows,true);
+      }catch(paymentError){
+        if(request!==state.detailRequest)return;
+        if(paymentError.status===404){$("detailContent").innerHTML=detailBase+detailCard("Payment record","<p class=\"muted\">No payment record was returned for this purchase.</p>",true);}
+        else{$("detailContent").innerHTML=detailBase+detailCard("Payment record",'<p class="detail-error" role="alert">'+esc(paymentError.message)+"</p>",true);}
+      }
+    }catch(error){if(request===state.detailRequest)detailState(error.status===404?"This purchase could not be found.":error.message,true);}
+  }
+  function initShell(){
+    var name=localStorage.getItem(USERNAME)||"admin",parts=name.trim().split(/\s+/);$("userName").textContent=name;$("userRole").textContent=localStorage.getItem(ROLE)||"ADMIN";$("userAvatar").textContent=((parts[0]||"A")[0]+(parts.length>1?parts[parts.length-1][0]:"")).toUpperCase();
+    $("logoutBtn").addEventListener("click",logout);var sidebar=$("sidebar");$("menuBtn").addEventListener("click",function(){sidebar.classList.add("open");});$("sidebarOverlay").addEventListener("click",function(){sidebar.classList.remove("open");});
+    $("refreshBtn").addEventListener("click",loadPurchases);$("filterForm").addEventListener("submit",function(event){event.preventDefault();state.page=0;loadPurchases();});
+    $("clearFiltersBtn").addEventListener("click",function(){$("filterForm").reset();$("filterError").hidden=true;state.page=0;loadPurchases();});
+    $("purchaseRows").addEventListener("click",function(event){var button=event.target.closest("button[data-details]");if(button)openDetails(button.dataset.details);});
+    $("pagination").addEventListener("click",function(event){var button=event.target.closest("button[data-page]");if(!button||button.disabled)return;var next=Number(button.dataset.page);if(next>=0&&next<state.totalPages){state.page=next;loadPurchases();}});
+    $("closeDetailsBtn").addEventListener("click",function(){$("purchaseDialog").close();state.detailRequest++;});$("doneDetailsBtn").addEventListener("click",function(){$("purchaseDialog").close();state.detailRequest++;});
+    $("purchaseDialog").addEventListener("close",function(){state.detailRequest++;});
+  }
+  initShell();loadPurchases();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Review and moderate community content reports.">
+<title>Content Reports - Admin Panel</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #fff;
+  --ink: #000;
+  --bg: #f1f1f1;
+  --wash: #f7f7f7;
+  --hover: #f0f0f0;
+  --line: #e8e8e8;
+  --line-strong: #d8d8d8;
+  --muted: #6b6b6b;
+  --muted-2: #8f8f8f;
+  --font: "Instrument Sans", "Helvetica Neue", Helvetica, "Segoe UI", sans-serif;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  --sidebar-w: 248px;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--bg);
+  font: 15px/1.5 var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+[hidden] { display: none !important; }
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+h1, h2, h3, p { margin: 0; }
+h1 { font-size: clamp(26px, 3vw, 33px); line-height: 1.12; letter-spacing: -.025em; }
+h2 { font-size: 19px; line-height: 1.25; letter-spacing: -.015em; }
+.muted { color: var(--muted); }
+.mono { font-family: var(--mono); font-size: .92em; }
+
+.app { display: flex; gap: 18px; min-height: 100vh; padding: 18px; }
+.sidebar {
+  position: sticky; top: 18px; display: flex; flex: 0 0 var(--sidebar-w);
+  flex-direction: column; height: calc(100vh - 36px); overflow: hidden;
+  border: 1px solid var(--line); border-radius: 22px; background: var(--paper); z-index: 20;
+}
+.sidebar-brand { display: flex; align-items: center; gap: 11px; padding: 22px; text-decoration: none; }
+.brand-mark { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 9px; background: var(--ink); color: #fff; font-weight: 700; }
+.brand-word { font-size: 16.5px; font-weight: 700; letter-spacing: .06em; }
+.brand-word span { color: var(--muted-2); font-weight: 500; }
+.sidebar-nav { flex: 1; overflow-y: auto; padding: 4px 14px 14px; }
+.nav-label { padding: 16px 10px 8px; color: var(--muted-2); font-size: 10.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.nav-item {
+  display: flex; align-items: center; gap: 11px; width: 100%; margin-bottom: 3px; padding: 10.5px 12px;
+  border: 0; border-radius: 12px; background: transparent; color: var(--ink); font-size: 14.5px;
+  text-align: left; text-decoration: none;
+}
+.nav-item:hover, .nav-item.active { background: var(--hover); }
+.nav-item.active { font-weight: 700; }
+.nav-item svg { width: 18px; height: 18px; color: var(--muted); }
+.sidebar-foot { display: flex; align-items: center; gap: 9px; padding: 15px 22px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12.5px; }
+.sidebar-overlay { display: none; position: fixed; inset: 0; background: #0006; z-index: 15; }
+.main { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 18px; }
+.topbar { display: flex; align-items: center; justify-content: space-between; min-height: 62px; padding: 11px 16px; border-radius: 18px; background: var(--paper); }
+.topbar-tag { color: var(--muted-2); font-size: 11px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
+.topbar-right, .user-chip { display: flex; align-items: center; gap: 12px; }
+.avatar { display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid var(--ink); border-radius: 50%; background: var(--ink); color: var(--paper); font-size: 13px; font-weight: 700; }
+.who b, .who span { display: block; }
+.who b { font-size: 14px; line-height: 1.2; }
+.who span { color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .1em; }
+.menu-btn { display: none !important; }
+.page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.page-head .sub { max-width: 640px; margin-top: 7px; color: var(--muted); font-size: 14.5px; }
+.page-actions { display: flex; gap: 10px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 18px;
+  border: 1px solid transparent; border-radius: 999px; background: transparent; color: var(--ink);
+  font-size: 14px; font-weight: 600; text-decoration: none; white-space: nowrap;
+}
+.btn:focus-visible, .icon-btn:focus-visible, .nav-item:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.btn-primary { background: var(--ink); color: var(--paper); }
+.btn-outline { border-color: var(--line-strong); background: var(--paper); }
+.btn-outline:hover { border-color: var(--ink); background: var(--wash); }
+.btn[disabled] { cursor: wait; opacity: .55; }
+.btn svg, .icon-btn svg { width: 17px; height: 17px; }
+.icon-btn { display: inline-grid; width: 38px; height: 38px; place-items: center; border: 1px solid var(--line-strong); border-radius: 50%; background: var(--paper); }
+.card { border-radius: 20px; background: var(--paper); }
+.toolbar { display: grid; grid-template-columns: minmax(210px, 1fr) repeat(2, minmax(160px, .55fr)); gap: 14px; padding: 20px; }
+.field { display: flex; min-width: 0; flex-direction: column; gap: 7px; }
+.field-label { color: var(--muted); font-size: 11.5px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; }
+.input, .select, .textarea { width: 100%; min-height: 46px; padding: 0 14px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--paper); color: var(--ink); }
+.textarea { min-height: 124px; padding: 12px 14px; resize: vertical; }
+.input:focus, .select:focus, .textarea:focus { outline: 2px solid var(--ink); outline-offset: 1px; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; text-align: left; }
+th { padding: 13px 18px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; }
+td { padding: 16px 18px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:hover { background: #fafafa; }
+.cell-primary { display: block; font-weight: 600; }
+.cell-secondary { display: block; margin-top: 3px; color: var(--muted); font-size: 12.5px; }
+.badge { display: inline-flex; min-height: 25px; align-items: center; padding: 0 10px; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--paper); font-size: 10.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; white-space: nowrap; }
+.badge-strong { border-color: var(--ink); background: var(--ink); color: var(--paper); }
+.badge-terminal { background: repeating-linear-gradient(135deg, #fff 0 4px, #ededed 4px 6px); }
+.table-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+.pager { display: flex; align-items: center; gap: 8px; }
+.pager .btn { min-height: 36px; padding: 0 12px; font-size: 13px; }
+.state { display: flex; min-height: 220px; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 28px; text-align: center; }
+.state h2 { font-size: 17px; }
+.state p { max-width: 480px; color: var(--muted); }
+.detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.detail-card { padding: 22px; }
+.detail-card h2 { margin-bottom: 18px; }
+.detail-list { display: grid; grid-template-columns: minmax(110px, .7fr) 1.3fr; gap: 13px 18px; }
+.detail-list dt { color: var(--muted); font-size: 13px; }
+.detail-list dd { min-width: 0; margin: 0; overflow-wrap: anywhere; font-weight: 600; }
+.detail-wide { grid-column: 1 / -1; }
+.explanation { white-space: pre-wrap; overflow-wrap: anywhere; font-weight: 400 !important; }
+.actions-card { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 20px 22px; }
+.action-buttons { display: flex; gap: 10px; }
+.alert { padding: 13px 16px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--paper); }
+.alert.error { border-color: #b42318; color: #8e1c14; }
+.dialog { width: min(520px, calc(100vw - 32px)); padding: 0; border: 0; border-radius: 20px; box-shadow: 0 24px 80px #0003; }
+.dialog::backdrop { background: #0007; backdrop-filter: blur(2px); }
+.dialog-inner { padding: 24px; }
+.dialog-inner h2 { margin-bottom: 8px; }
+.dialog-inner > p { margin-bottom: 20px; color: var(--muted); }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+.toast { position: fixed; right: 20px; bottom: 20px; z-index: 50; max-width: min(420px, calc(100vw - 40px)); padding: 14px 18px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--paper); box-shadow: 0 8px 30px #0002; }
+.toast.error { border-color: #b42318; color: #8e1c14; }
+.spin { width: 22px; height: 22px; border: 2px solid var(--line-strong); border-top-color: var(--ink); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 980px) {
+  .app { gap: 0; padding: 12px; }
+  .sidebar { position: fixed; top: 0; bottom: 0; left: 0; width: min(300px, 84vw); height: 100vh; border-radius: 0 22px 22px 0; transform: translateX(-110%); transition: transform .2s ease; z-index: 40; }
+  .sidebar.open { transform: none; }
+  .sidebar.open ~ .sidebar-overlay { display: block; }
+  .menu-btn { display: inline-grid !important; }
+  .main { width: 100%; }
+}
+@media (max-width: 680px) {
+  .app { padding: 10px; }
+  .toolbar { grid-template-columns: 1fr; }
+  .page-head { align-items: flex-start; flex-direction: column; }
+  .page-actions, .page-actions .btn { width: 100%; }
+  .table-foot, .actions-card { align-items: flex-start; flex-direction: column; }
+  .pager, .pager .btn { width: 100%; }
+  .detail-grid { grid-template-columns: 1fr; }
+  .detail-wide { grid-column: auto; }
+  .detail-card { padding: 18px; }
+  .detail-list { grid-template-columns: 1fr; gap: 4px; }
+  .detail-list dd { margin-bottom: 10px; }
+  .action-buttons { width: 100%; flex-direction: column; }
+  .action-buttons .btn { width: 100%; }
+  .user-chip .who { display: none; }
+  .topbar { padding: 10px 12px; }
+  .dialog-actions { flex-direction: column-reverse; }
+  .dialog-actions .btn { width: 100%; }
+  .table-foot { padding: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <a class="sidebar-brand" href="admin_dashboard.html">
+      <span class="brand-mark" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8.5" fill="currentColor"/><g stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8.5v15"/><path d="M10 12h12"/><path d="M10 12 6.8 19h6.4L10 12z"/><path d="M18 12l-3.2 7h6.4L18 12z"/><path d="M11.5 23.5h9"/></g></svg></span>
+      <span class="brand-word">ADMIN<span>/PANEL</span></span>
+    </a>
+    <nav class="sidebar-nav" aria-label="Admin navigation">
+      <div class="nav-label">Menu</div>
+      <a class="nav-item" href="admin_dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.6"/><rect x="14" y="14" width="7" height="7" rx="1.6"/></svg><span>Dashboard</span></a>
+      <a class="nav-item" href="users.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Users</span></a>
+      <a class="nav-item" href="lawyer_verifications.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><span>Lawyer Verification</span></a>
+      <div class="nav-label">Catalog</div>
+      <a class="nav-item" href="practice_areas.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2.2"/><path d="M16 7V5.6A2 2 0 0 0 14 3.6h-4a2 2 0 0 0-2 2V7"/><path d="M2.5 12.5c4.6 2 14.4 2 19 0"/><path d="M12 12v2"/></svg><span>Practice Areas</span></a>
+      <a class="nav-item" href="jurisdictions.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14"/><path d="M15 6v14"/></svg><span>Jurisdictions</span></a>
+      <a class="nav-item" href="courts.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-6 9 6"/><path d="M5 21V10"/><path d="M9.5 21V10"/><path d="M14.5 21V10"/><path d="M19 21V10"/><path d="M3 21h18"/></svg><span>Courts</span></a>
+      <div class="nav-label">General</div>
+      <button class="nav-item" type="button" id="logoutBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg><span>Logout</span></button>
+    </nav>
+    <div class="sidebar-foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2.2"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></svg><span>Secure admin session</span></div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <main class="main">
+    <header class="topbar">
+      <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <span class="topbar-tag">Moderation</span>
+      <div class="topbar-right"><div class="user-chip"><span class="avatar" data-user-avatar>A</span><span class="who"><b data-user-name>admin</b><span data-user-role>ADMIN</span></span></div></div>
+    </header>
+
+    <section class="page-head">
+      <div><h1>Content reports</h1><p class="sub">Review reports submitted about community posts and comments.</p></div>
+      <div class="page-actions">
+        <button class="btn btn-outline" id="refreshBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 12a8.6 8.6 0 1 1-2.5-6.1"/><path d="M20.6 3.5v6h-6"/></svg>
+          Refresh
+        </button>
+      </div>
+    </section>
+
+    <section class="card toolbar" aria-label="Report filters">
+      <div class="field">
+        <label class="field-label" for="searchInput">Search this page</label>
+        <input class="input" id="searchInput" type="search" placeholder="Report, reporter or target ID" autocomplete="off">
+      </div>
+      <div class="field">
+        <label class="field-label" for="statusFilter">Status</label>
+        <select class="select" id="statusFilter">
+          <option value="">All statuses</option>
+          <option value="OPEN">OPEN</option>
+          <option value="IN_REVIEW">IN_REVIEW</option>
+          <option value="RESOLVED">RESOLVED</option>
+          <option value="REJECTED">REJECTED</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="field-label" for="reasonFilter">Report category</label>
+        <select class="select" id="reasonFilter">
+          <option value="">All categories</option>
+          <option value="SPAM">SPAM</option>
+          <option value="HARASSMENT">HARASSMENT</option>
+          <option value="INAPPROPRIATE_CONTENT">INAPPROPRIATE_CONTENT</option>
+          <option value="MISINFORMATION">MISINFORMATION</option>
+          <option value="OTHER">OTHER</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="card" aria-label="Content reports">
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th scope="col">Report</th>
+            <th scope="col">Reporter</th>
+            <th scope="col">Reported content</th>
+            <th scope="col">Category</th>
+            <th scope="col">Status</th>
+            <th scope="col">Submitted</th>
+            <th scope="col"><span class="sr-only">Details</span></th>
+          </tr></thead>
+          <tbody id="reportRows"><tr><td colspan="7"><div class="state" role="status"><span class="spin" aria-hidden="true"></span><p>Loading reports…</p></div></td></tr></tbody>
+        </table>
+      </div>
+      <footer class="table-foot">
+        <span id="resultsSummary" aria-live="polite"></span>
+        <nav class="pager" id="pagination" aria-label="Report pages"></nav>
+      </footer>
+    </section>
+  </main>
+</div>
+<div id="toast" class="toast" role="status" hidden></div>
+<script>
+(function () {
+  var nav = document.querySelector(".sidebar-nav");
+  if (!nav || nav.querySelector("[data-content-reports-nav]")) return;
+
+  var label = document.createElement("div");
+  label.className = "nav-label";
+  label.textContent = "Moderation";
+
+  var link = document.createElement("a");
+  link.className = "nav-item";
+  link.href = "content_reports.html";
+  link.setAttribute("data-content-reports-nav", "");
+  link.innerHTML =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M12 3 3.5 7v5.5c0 4.5 3.6 7.6 8.5 9.5 4.9-1.9 8.5-5 8.5-9.5V7L12 3Z"/>' +
+    '<path d="m9 12 2 2 4-4"/></svg><span>Content Reports</span>';
+
+  if (location.pathname.endsWith("content_reports.html") ||
+      location.pathname.endsWith("content_report_detail.html")) {
+    link.classList.add("active");
+    link.setAttribute("aria-current", "page");
+  }
+
+  var general = Array.prototype.find.call(nav.querySelectorAll(".nav-label"), function (item) {
+    return item.textContent.trim().toLowerCase() === "general";
+  });
+  if (general) {
+    nav.insertBefore(label, general);
+    nav.insertBefore(link, general);
+  } else {
+    nav.appendChild(label);
+    nav.appendChild(link);
+  }
+})();
+
+</script>
+<script>
+(function () {
+  "use strict";
+
+  var API_BASE = "http://localhost:18081";
+  var REPORTS_API = API_BASE + "/api/admin/v1/community/reports";
+  var TOKEN_KEY = "adminAccessToken";
+  var USERNAME_KEY = "adminUsername";
+  var ROLE_KEY = "adminRole";
+  var PAGE_SIZE = 20;
+
+  function byId(id) { return document.getElementById(id); }
+  function escapeHtml(value) {
+    return String(value == null ? "" : value).replace(/[&<>"']/g, function (char) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char];
+    });
+  }
+
+  function getToken() { return localStorage.getItem(TOKEN_KEY); }
+  function clearSession() {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USERNAME_KEY);
+    localStorage.removeItem(ROLE_KEY);
+  }
+  function authGuard() {
+    if (getToken()) return true;
+    window.location.replace("admin_login.html");
+    return false;
+  }
+  function logout() {
+    clearSession();
+    window.location.replace("admin_login.html");
+  }
+
+  function ApiError(message, status) {
+    this.name = "ApiError";
+    this.message = message;
+    this.status = status || 0;
+  }
+  ApiError.prototype = Object.create(Error.prototype);
+  ApiError.prototype.constructor = ApiError;
+
+  async function api(url, options) {
+    options = options || {};
+    var headers = {};
+    var token = getToken();
+    if (token) headers.Authorization = "Bearer " + token;
+    if (options.body !== undefined) headers["Content-Type"] = "application/json";
+
+    var response;
+    try {
+      response = await fetch(url, {
+        method: options.method || "GET",
+        headers: headers,
+        body: options.body === undefined ? undefined : JSON.stringify(options.body)
+      });
+    } catch (error) {
+      throw new ApiError("Cannot reach the API server at " + API_BASE + ". Check that the backend is running.", 0);
+    }
+
+    if (response.status === 401) {
+      clearSession();
+      window.location.replace("admin_login.html");
+      throw new ApiError("Session expired. Please sign in again.", 401);
+    }
+    if (response.status === 403) {
+      throw new ApiError("Access denied. Admin permission required.", 403);
+    }
+
+    var payload = null;
+    try { payload = await response.json(); } catch (error) { payload = null; }
+    if (!response.ok) {
+      var message = payload && (payload.message || payload.error ||
+        (Array.isArray(payload.errors) && payload.errors[0]));
+      throw new ApiError(message || "Request failed with status " + response.status + ".", response.status);
+    }
+    if (payload && payload.success === false) {
+      throw new ApiError(payload.message || "The API could not complete the request.", response.status);
+    }
+    return payload && Object.prototype.hasOwnProperty.call(payload, "data") ? payload.data : payload;
+  }
+
+  function formatDate(value, withTime) {
+    if (!value) return "—";
+    var date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "—";
+    var result = date.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+    return withTime ? result + ", " + date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) : result;
+  }
+
+  function showToast(message, isError) {
+    var toast = byId("toast");
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.toggle("error", Boolean(isError));
+    toast.hidden = false;
+    window.clearTimeout(showToast.timeout);
+    showToast.timeout = window.setTimeout(function () { toast.hidden = true; }, 4200);
+  }
+
+  function fillUserChip() {
+    var name = localStorage.getItem(USERNAME_KEY) || "admin";
+    var nameEl = document.querySelector("[data-user-name]");
+    var roleEl = document.querySelector("[data-user-role]");
+    var avatarEl = document.querySelector("[data-user-avatar]");
+    if (nameEl) nameEl.textContent = name;
+    if (roleEl) roleEl.textContent = localStorage.getItem(ROLE_KEY) || "ADMIN";
+    if (avatarEl) {
+      var parts = name.trim().split(/\s+/);
+      avatarEl.textContent = ((parts[0] || "A")[0] + (parts.length > 1 ? parts[parts.length - 1][0] : "")).toUpperCase();
+    }
+  }
+
+  function initShell() {
+    fillUserChip();
+    var logoutButton = byId("logoutBtn");
+    if (logoutButton) logoutButton.addEventListener("click", logout);
+    var sidebar = byId("sidebar");
+    var overlay = byId("sidebarOverlay");
+    var menuButton = byId("menuBtn");
+    if (menuButton && sidebar) menuButton.addEventListener("click", function () { sidebar.classList.toggle("open"); });
+    if (overlay && sidebar) overlay.addEventListener("click", function () { sidebar.classList.remove("open"); });
+  }
+
+  function statusBadge(status) {
+    var value = String(status || "UNKNOWN");
+    var className = value === "RESOLVED" || value === "REJECTED" ? "badge-terminal" :
+      value === "IN_REVIEW" ? "badge-strong" : "";
+    return '<span class="badge ' + className + '">' + escapeHtml(value.replace(/_/g, " ")) + "</span>";
+  }
+
+  var listState = { page: 0, totalPages: 0, totalElements: 0, rows: [], request: 0 };
+
+  function makeListUrl() {
+    var params = new URLSearchParams();
+    params.set("page", String(listState.page));
+    params.set("size", String(PAGE_SIZE));
+    var status = byId("statusFilter").value;
+    var reason = byId("reasonFilter").value;
+    if (status) params.set("status", status);
+    if (reason) params.set("reason", reason);
+    return REPORTS_API + "?" + params.toString();
+  }
+
+  function setListState(message, isError) {
+    byId("reportRows").innerHTML =
+      '<tr><td colspan="7"><div class="state"' + (isError ? ' role="alert"' : ' role="status"') + ">" +
+      (isError ? "" : '<span class="spin" aria-hidden="true"></span>') +
+      "<p>" + escapeHtml(message) + "</p>" +
+      (isError ? '<button class="btn btn-outline" type="button" data-retry>Retry</button>' : "") +
+      "</div></td></tr>";
+    byId("resultsSummary").textContent = "";
+    byId("pagination").replaceChildren();
+    var retry = byId("reportRows").querySelector("[data-retry]");
+    if (retry) retry.addEventListener("click", loadReports);
+  }
+
+  function searchableText(report) {
+    return [
+      report.id, report.reporterId, report.reporterRole, report.reporterStatus,
+      report.targetType, report.targetId, report.reason, report.explanation,
+      report.status, report.createdAt, report.moderatorDecision, report.moderatorReason
+    ].join(" ").toLowerCase();
+  }
+
+  function renderRows() {
+    var query = byId("searchInput").value.trim().toLowerCase();
+    var visible = listState.rows.filter(function (report) {
+      return !query || searchableText(report).includes(query);
+    });
+    var rows = byId("reportRows");
+    if (!visible.length) {
+      var hasFilters = Boolean(query || byId("statusFilter").value || byId("reasonFilter").value);
+      var title = hasFilters ? "No reports match these filters" : "No content reports";
+      var description = query ? "Try a different search. Search covers reports on this page only." :
+        hasFilters ? "Adjust the selected filters and try again." : "New community reports will appear here.";
+      rows.innerHTML = '<tr><td colspan="7"><div class="state"><h2>' + escapeHtml(title) +
+        "</h2><p>" + escapeHtml(description) + "</p></div></td></tr>";
+    } else {
+      rows.innerHTML = visible.map(function (report) {
+        var target = String(report.targetType || "—") + " #" + (report.targetId == null ? "—" : report.targetId);
+        var reporterMeta = [report.reporterRole, report.reporterStatus].filter(Boolean).join(" · ");
+        return "<tr>" +
+          '<td><span class="cell-primary mono">#' + escapeHtml(report.id) + "</span></td>" +
+          '<td><span class="cell-primary">Reporter #' + escapeHtml(report.reporterId) + "</span>" +
+          '<span class="cell-secondary">' + escapeHtml(reporterMeta || "—") + "</span></td>" +
+          '<td><span class="cell-primary">' + escapeHtml(target) + "</span></td>" +
+          '<td><span class="badge">' + escapeHtml(report.reason || "—").replace(/_/g, " ") + "</span></td>" +
+          "<td>" + statusBadge(report.status) + "</td>" +
+          '<td><span class="cell-primary">' + escapeHtml(formatDate(report.createdAt, true)) + "</span></td>" +
+          '<td><a class="btn btn-outline" href="content_report_detail.html?id=' +
+          encodeURIComponent(report.id) + '">View<span class="sr-only"> report ' +
+          escapeHtml(report.id) + "</span></a></td></tr>";
+      }).join("");
+    }
+
+    if (query) {
+      var first = listState.totalElements === 0 ? 0 : listState.page * PAGE_SIZE + 1;
+      var last = listState.page * PAGE_SIZE + listState.rows.length;
+      byId("resultsSummary").textContent = visible.length + " matching on this page · " +
+        "showing " + first + "–" + last + " of " + listState.totalElements;
+    } else {
+      var start = listState.totalElements === 0 ? 0 : listState.page * PAGE_SIZE + 1;
+      var end = Math.min(listState.totalElements, (listState.page + 1) * PAGE_SIZE);
+      byId("resultsSummary").textContent = "Showing " + start + "–" + end + " of " + listState.totalElements;
+    }
+    renderPagination();
+  }
+
+  function renderPagination() {
+    var container = byId("pagination");
+    container.replaceChildren();
+    if (listState.totalPages < 2) return;
+    var previous = document.createElement("button");
+    previous.type = "button";
+    previous.className = "btn btn-outline";
+    previous.textContent = "Previous";
+    previous.disabled = listState.page <= 0;
+    previous.setAttribute("aria-label", "Previous page");
+    previous.addEventListener("click", function () {
+      if (listState.page > 0) { listState.page -= 1; loadReports(); }
+    });
+    var pageLabel = document.createElement("span");
+    pageLabel.textContent = "Page " + (listState.page + 1) + " of " + listState.totalPages;
+    pageLabel.setAttribute("aria-live", "polite");
+    var next = document.createElement("button");
+    next.type = "button";
+    next.className = "btn btn-outline";
+    next.textContent = "Next";
+    next.disabled = listState.page >= listState.totalPages - 1;
+    next.setAttribute("aria-label", "Next page");
+    next.addEventListener("click", function () {
+      if (listState.page < listState.totalPages - 1) { listState.page += 1; loadReports(); }
+    });
+    container.append(previous, pageLabel, next);
+  }
+
+  async function loadReports() {
+    if (!byId("reportRows")) return;
+    var request = ++listState.request;
+    var refresh = byId("refreshBtn");
+    refresh.disabled = true;
+    setListState("Loading reports…", false);
+    try {
+      var data = await api(makeListUrl());
+      if (request !== listState.request) return;
+      if (!data || !Array.isArray(data.content) || typeof data.page !== "number" ||
+          typeof data.totalElements !== "number" || typeof data.totalPages !== "number") {
+        throw new ApiError("The reports API returned an unexpected page response.", 0);
+      }
+      listState.rows = data.content;
+      listState.page = data.page;
+      listState.totalPages = data.totalPages;
+      listState.totalElements = data.totalElements;
+      renderRows();
+    } catch (error) {
+      if (request !== listState.request) return;
+      setListState(error.message || "Could not load reports.", true);
+    } finally {
+      if (request === listState.request) refresh.disabled = false;
+    }
+  }
+
+  function initList() {
+    byId("refreshBtn").addEventListener("click", loadReports);
+    byId("searchInput").addEventListener("input", renderRows);
+    byId("statusFilter").addEventListener("change", function () { listState.page = 0; loadReports(); });
+    byId("reasonFilter").addEventListener("change", function () { listState.page = 0; loadReports(); });
+    byId("pagination").addEventListener("click", function (event) {
+      if (event.target.closest("[data-page]")) loadReports();
+    });
+    window.addEventListener("pageshow", function () {
+      if (sessionStorage.getItem("contentReportListDirty") === "1") {
+        sessionStorage.removeItem("contentReportListDirty");
+        loadReports();
+      }
+    });
+    if (sessionStorage.getItem("contentReportListDirty") === "1") {
+      sessionStorage.removeItem("contentReportListDirty");
+    }
+    loadReports();
+  }
+
+  function renderDetail(report) {
+    var status = String(report.status || "UNKNOWN");
+    var canDecide = status === "OPEN" || status === "IN_REVIEW";
+    byId("detailSubtitle").textContent = "Report #" + report.id + " · " +
+      String(report.targetType || "content").toLowerCase() + " report";
+    byId("detailAlert").hidden = true;
+
+    var moderation = [
+      ["Current status", statusBadge(report.status)],
+      ["Decision", report.moderatorDecision ? escapeHtml(report.moderatorDecision) : "—"],
+      ["Decision reason", report.moderatorReason ? escapeHtml(report.moderatorReason) : "—"],
+      ["Moderator ID", report.moderatorId == null ? "—" : "#" + escapeHtml(report.moderatorId)],
+      ["Moderator role", escapeHtml(report.moderatorRole || "—")],
+      ["Reviewed at", escapeHtml(formatDate(report.reviewedAt, true))],
+      ["Last updated", escapeHtml(formatDate(report.updatedAt, true))]
+    ];
+    var target = escapeHtml(String(report.targetType || "—") + " #" +
+      (report.targetId == null ? "—" : report.targetId));
+    var reporterMeta = [
+      ["Reporter ID", report.reporterId == null ? "—" : "#" + escapeHtml(report.reporterId)],
+      ["Reporter role", escapeHtml(report.reporterRole || "—")],
+      ["Reporter status", escapeHtml(report.reporterStatus || "—")]
+    ];
+
+    function definitionList(entries) {
+      return '<dl class="detail-list">' + entries.map(function (entry) {
+        return "<dt>" + escapeHtml(entry[0]) + "</dt><dd>" + entry[1] + "</dd>";
+      }).join("") + "</dl>";
+    }
+
+    byId("detailContent").innerHTML =
+      '<div class="detail-grid">' +
+      '<section class="card detail-card"><h2>Report information</h2>' +
+      definitionList([
+        ["Report ID", "#" + escapeHtml(report.id)],
+        ["Category", escapeHtml(String(report.reason || "—").replace(/_/g, " "))],
+        ["Status", statusBadge(report.status)],
+        ["Submitted", escapeHtml(formatDate(report.createdAt, true))],
+        ["Explanation", '<span class="explanation">' + escapeHtml(report.explanation || "No explanation provided.") + "</span>"]
+      ]) + "</section>" +
+      '<section class="card detail-card"><h2>Reporter</h2>' + definitionList(reporterMeta) + "</section>" +
+      '<section class="card detail-card"><h2>Reported content</h2>' +
+      definitionList([["Target", target], ["Target type", escapeHtml(report.targetType || "—")],
+        ["Target ID", report.targetId == null ? "—" : "#" + escapeHtml(report.targetId)]]) + "</section>" +
+      '<section class="card detail-card"><h2>Moderation history</h2>' + definitionList(moderation) + "</section>" +
+      '<section class="card actions-card detail-wide"><div><h2>Moderation actions</h2><p class="muted">' +
+      (canDecide ? "Record a decision for this report." : "This report is terminal and cannot receive another decision.") +
+      "</p></div>" +
+      (canDecide ? '<div class="action-buttons">' +
+        '<button class="btn btn-outline" type="button" data-decision="REJECT">Reject report</button>' +
+        '<button class="btn btn-primary" type="button" data-decision="RESOLVE">Resolve report</button>' +
+        "</div>" : "") + "</section></div>";
+
+    if (canDecide) {
+      Array.prototype.forEach.call(byId("detailContent").querySelectorAll("[data-decision]"), function (button) {
+        button.addEventListener("click", function () { openDecisionDialog(button.getAttribute("data-decision")); });
+      });
+    }
+  }
+
+  var reportId = new URLSearchParams(window.location.search).get("id");
+  var decision = null;
+  var detailRequest = 0;
+
+  function showDetailError(error) {
+    var alert = byId("detailAlert");
+    alert.textContent = error.message || "Could not load this report.";
+    alert.hidden = false;
+    var detail = byId("detailContent");
+    detail.innerHTML = '<section class="card state" role="alert"><h2>' +
+      (error.status === 404 ? "Report not found" : "Could not load report") +
+      "</h2><p>" + escapeHtml(error.message || "Please try again.") +
+      '</p><a class="btn btn-outline" href="content_reports.html">Back to reports</a></section>';
+  }
+
+  async function loadReport() {
+    var request = ++detailRequest;
+    byId("detailRefreshBtn").disabled = true;
+    byId("detailAlert").hidden = true;
+    byId("detailContent").innerHTML =
+      '<section class="card state" role="status"><span class="spin" aria-hidden="true"></span><p>Loading report…</p></section>';
+    try {
+      var report = await api(REPORTS_API + "/" + encodeURIComponent(reportId));
+      if (request !== detailRequest) return;
+      if (!report || typeof report !== "object" || report.id == null) {
+        throw new ApiError("The report API returned an unexpected response.", 0);
+      }
+      renderDetail(report);
+    } catch (error) {
+      if (request !== detailRequest) return;
+      showDetailError(error);
+      throw error;
+    } finally {
+      if (request === detailRequest) byId("detailRefreshBtn").disabled = false;
+    }
+  }
+
+  function openDecisionDialog(value) {
+    decision = value;
+    byId("dialogTitle").textContent = value === "RESOLVE" ? "Resolve this report?" : "Reject this report?";
+    byId("dialogDescription").textContent = value === "RESOLVE"
+      ? "Confirm that this report is valid. Add the reason that will be recorded for the decision."
+      : "Confirm that this report is rejected. Add the reason that will be recorded for the decision.";
+    byId("decisionReason").value = "";
+    byId("decisionError").hidden = true;
+    byId("decisionDialog").showModal();
+    byId("decisionReason").focus();
+  }
+
+  async function submitDecision(event) {
+    event.preventDefault();
+    var form = byId("decisionForm");
+    var reasonInput = byId("decisionReason");
+    var reason = reasonInput.value.trim();
+    var errorBox = byId("decisionError");
+    if (!reason) {
+      reasonInput.setCustomValidity("Enter a decision reason.");
+      reasonInput.reportValidity();
+      reasonInput.setCustomValidity("");
+      return;
+    }
+    if (reason.length > 1000) {
+      errorBox.textContent = "Decision reason must not exceed 1000 characters.";
+      errorBox.hidden = false;
+      reasonInput.focus();
+      return;
+    }
+
+    var confirm = byId("confirmDecision");
+    var cancel = byId("cancelDecision");
+    confirm.disabled = true;
+    cancel.disabled = true;
+    confirm.textContent = "Submitting…";
+    errorBox.hidden = true;
+    try {
+      await api(REPORTS_API + "/" + encodeURIComponent(reportId) + "/decision", {
+        method: "POST",
+        body: { decision: decision, reason: reason }
+      });
+      sessionStorage.setItem("contentReportListDirty", "1");
+      byId("decisionDialog").close();
+      showToast("Moderation decision recorded.", false);
+      await loadReport();
+    } catch (error) {
+      if (error.status === 409) {
+        byId("decisionDialog").close();
+        showToast("Another moderator changed this report. The latest status has been refreshed.", true);
+        try { await loadReport(); } catch (refreshError) { showToast(refreshError.message, true); }
+      } else {
+        errorBox.textContent = error.message || "Could not submit the decision.";
+        errorBox.hidden = false;
+      }
+    } finally {
+      confirm.disabled = false;
+      cancel.disabled = false;
+      confirm.textContent = "Confirm decision";
+    }
+  }
+
+  function initDetail() {
+    byId("detailRefreshBtn").addEventListener("click", function () { loadReport().catch(function () {}); });
+    byId("decisionForm").addEventListener("submit", submitDecision);
+    byId("cancelDecision").addEventListener("click", function () { byId("decisionDialog").close(); });
+    byId("decisionDialog").addEventListener("click", function (event) {
+      if (event.target === byId("decisionDialog")) byId("decisionDialog").close();
+    });
+
+    if (!/^[1-9]\d*$/.test(reportId || "")) {
+      byId("detailRefreshBtn").disabled = true;
+      showDetailError(new ApiError("A valid report ID is required.", 400));
+      return;
+    }
+    loadReport().catch(function () {});
+  }
+
+  if (!authGuard()) return;
+  initShell();
+  if (byId("reportRows")) initList();
+  else if (byId("detailContent")) initDetail();
+})();
+
+</script>
+<script>
+(function () {
+  var nav = document.querySelector(".sidebar-nav");
+  var reportsLink = nav && nav.querySelector("[data-content-reports-nav]");
+  if (!reportsLink || nav.querySelector("[data-verification-history-nav]")) return;
+  var label = document.createElement("div");
+  label.className = "nav-label";
+  label.textContent = "Verification";
+  var link = document.createElement("a");
+  link.className = "nav-item";
+  link.href = "verification_history.html";
+  link.setAttribute("data-verification-history-nav", "");
+  link.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 3.5 7v5.5c0 4.5 3.6 7.6 8.5 9.5 4.9-1.9 8.5-5 8.5-9.5V7L12 3Z"/><path d="m9 12 2 2 4-4"/></svg><span>Verification History</span>';
+  var general = Array.prototype.find.call(nav.querySelectorAll(".nav-label"), function (item) {
+    return item.textContent.trim().toLowerCase() === "general";
+  });
+  if (general) {
+    nav.insertBefore(label, general);
+    nav.insertBefore(link, general);
+  } else {
+    nav.append(label, link);
+  }
+})();
+</script>
+<script>
+(function(){var nav=document.querySelector(".sidebar-nav");if(!nav||nav.querySelector("[data-boost-management-nav]"))return;var label=document.createElement("div");label.className="nav-label";label.textContent="Boost management";var plans=document.createElement("a");plans.className="nav-item";plans.href="boost_plans.html";plans.setAttribute("data-boost-management-nav","");plans.textContent="Boost Plans";var purchases=document.createElement("a");purchases.className="nav-item";purchases.href="boost_purchases.html";purchases.textContent="Boost Purchases";var general=Array.prototype.find.call(nav.querySelectorAll(".nav-label"),function(item){return item.textContent.trim().toLowerCase()==="general";});if(general){nav.insertBefore(label,general);nav.insertBefore(plans,general);nav.insertBefore(purchases,general);}else nav.append(label,plans,purchases);})();
+</script>
+<script>(function(){var nav=document.querySelector(".sidebar-nav"),purchase=nav&&nav.querySelector('a[href="boost_purchases.html"]');if(!purchase||nav.querySelector("[data-invoice-metadata-nav]"))return;var link=document.createElement("a");link.className="nav-item";link.href="invoices.html";link.textContent="Invoice Metadata";link.setAttribute("data-invoice-metadata-nav","");purchase.insertAdjacentElement("afterend",link);})();</script>
+<script>
+(function () {
+  var nav = document.querySelector(".sidebar-nav");
+  if (!nav || nav.querySelector('a[href="support_tickets.html"]')) return;
+  var label = document.createElement("div");
+  label.className = "nav-label";
+  label.textContent = "Support";
+  var link = document.createElement("a");
+  link.className = "nav-item";
+  link.href = "support_tickets.html";
+  link.textContent = "Support Tickets";
+  var general = Array.prototype.find.call(nav.querySelectorAll(".nav-label"), function (item) {
+    return item.textContent.trim().toLowerCase() === "general";
+  });
+  if (general) {
+    nav.insertBefore(label, general);
+    nav.insertBefore(link, general);
+  } else {
+    nav.append(label, link);
+  }
+})();
+</script>
+</body>
+</html>

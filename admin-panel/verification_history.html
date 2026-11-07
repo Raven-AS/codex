@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Review administrative verification actions for a lawyer profile.">
+<title>Verification History - Admin Panel</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #fff; --ink: #000; --bg: #f1f1f1; --wash: #f7f7f7; --hover: #f0f0f0;
+  --line: #e8e8e8; --line-strong: #d8d8d8; --muted: #6b6b6b; --muted-2: #8f8f8f;
+  --font: "Instrument Sans", "Helvetica Neue", Helvetica, "Segoe UI", sans-serif;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace; --sidebar-w: 248px;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; color: var(--ink); background: var(--bg); font: 15px/1.5 var(--font); -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+[hidden] { display: none !important; }
+h1, h2, p { margin: 0; }
+h1 { font-size: clamp(26px, 3vw, 33px); line-height: 1.12; letter-spacing: -.025em; }
+h2 { font-size: 19px; line-height: 1.25; letter-spacing: -.015em; }
+.muted { color: var(--muted); }
+.mono { font-family: var(--mono); font-size: .92em; }
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.app { display: flex; gap: 18px; min-height: 100vh; padding: 18px; }
+.sidebar { position: sticky; top: 18px; display: flex; flex: 0 0 var(--sidebar-w); flex-direction: column; height: calc(100vh - 36px); overflow: hidden; border: 1px solid var(--line); border-radius: 22px; background: var(--paper); z-index: 20; }
+.sidebar-brand { display: flex; align-items: center; gap: 11px; padding: 22px; text-decoration: none; }
+.brand-mark { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 9px; background: var(--ink); color: #fff; }
+.brand-word { font-size: 16.5px; font-weight: 700; letter-spacing: .06em; }
+.brand-word span { color: var(--muted-2); font-weight: 500; }
+.sidebar-nav { flex: 1; overflow-y: auto; padding: 4px 14px 14px; }
+.nav-label { padding: 16px 10px 8px; color: var(--muted-2); font-size: 10.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.nav-item { display: flex; align-items: center; gap: 11px; width: 100%; margin-bottom: 3px; padding: 10.5px 12px; border: 0; border-radius: 12px; background: transparent; color: var(--ink); font-size: 14.5px; text-align: left; text-decoration: none; }
+.nav-item:hover, .nav-item.active { background: var(--hover); }
+.nav-item.active { font-weight: 700; }
+.nav-item svg { width: 18px; height: 18px; color: var(--muted); flex-shrink: 0; }
+.sidebar-foot { display: flex; align-items: center; gap: 9px; padding: 15px 22px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12.5px; }
+.sidebar-foot svg { width: 14px; height: 14px; }
+.sidebar-overlay { display: none; position: fixed; inset: 0; background: #0006; z-index: 15; }
+.sidebar.open ~ .sidebar-overlay { display: block; }
+.main { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 18px; }
+.topbar { display: flex; align-items: center; justify-content: space-between; min-height: 62px; padding: 11px 16px; border-radius: 18px; background: var(--paper); }
+.topbar-tag { color: var(--muted-2); font-size: 11px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
+.topbar-right, .user-chip { display: flex; align-items: center; gap: 12px; }
+.avatar { display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid var(--ink); border-radius: 50%; background: var(--ink); color: var(--paper); font-size: 13px; font-weight: 700; }
+.who b, .who span { display: block; }
+.who b { font-size: 14px; line-height: 1.2; }
+.who span { color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .1em; }
+.menu-btn { display: none !important; }
+.page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.page-head .sub { max-width: 680px; margin-top: 7px; color: var(--muted); font-size: 14.5px; }
+.page-actions { display: flex; gap: 10px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 18px; border: 1px solid transparent; border-radius: 999px; background: transparent; color: var(--ink); font-size: 14px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.btn:focus-visible, .icon-btn:focus-visible, .nav-item:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.btn-primary { background: var(--ink); color: var(--paper); }
+.btn-outline { border-color: var(--line-strong); background: var(--paper); }
+.btn-outline:hover { border-color: var(--ink); background: var(--wash); }
+.btn[disabled] { cursor: wait; opacity: .55; }
+.icon-btn { display: inline-grid; width: 38px; height: 38px; place-items: center; border: 1px solid var(--line-strong); border-radius: 50%; background: var(--paper); }
+.icon-btn svg, .btn svg { width: 17px; height: 17px; }
+.card { border-radius: 20px; background: var(--paper); }
+.toolbar { display: grid; grid-template-columns: minmax(200px, 1fr) minmax(190px, .75fr) auto; align-items: end; gap: 14px; padding: 20px; }
+.field { display: flex; min-width: 0; flex-direction: column; gap: 7px; }
+.field-label { color: var(--muted); font-size: 11.5px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; }
+.input, .select { width: 100%; min-height: 46px; padding: 0 14px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--paper); color: var(--ink); }
+.input:focus, .select:focus { outline: 2px solid var(--ink); outline-offset: 1px; }
+.notice { padding: 14px 17px; border: 1px solid var(--line); border-radius: 14px; background: var(--wash); color: var(--muted); font-size: 13px; }
+.notice strong { color: var(--ink); }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; text-align: left; }
+th { padding: 13px 18px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; }
+td { padding: 16px 18px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:hover { background: #fafafa; }
+.cell-primary { display: block; font-weight: 600; }
+.cell-secondary { display: block; margin-top: 3px; color: var(--muted); font-size: 12.5px; }
+.badge { display: inline-flex; min-height: 25px; align-items: center; padding: 0 10px; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--paper); font-size: 10.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; white-space: nowrap; }
+.badge-approved { border-color: var(--ink); background: var(--ink); color: var(--paper); }
+.badge-rejected { border-color: var(--ink); background: repeating-linear-gradient(135deg, #fff 0 4px, #ededed 4px 6px); }
+.badge-pending { border-style: dashed; }
+.table-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+.pager { display: flex; align-items: center; gap: 8px; }
+.pager .btn { min-height: 36px; padding: 0 12px; font-size: 13px; }
+.state { display: flex; min-height: 220px; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 28px; text-align: center; }
+.state h2 { font-size: 17px; }
+.state p { max-width: 520px; color: var(--muted); }
+.state.error { color: #8e1c14; }
+.spin { width: 22px; height: 22px; border: 2px solid var(--line-strong); border-top-color: var(--ink); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 980px) {
+  .app { gap: 0; padding: 12px; }
+  .sidebar { position: fixed; top: 0; bottom: 0; left: 0; width: min(300px, 84vw); height: 100vh; border-radius: 0 22px 22px 0; transform: translateX(-110%); transition: transform .2s ease; z-index: 40; }
+  .sidebar.open { transform: none; }
+  .menu-btn { display: inline-grid !important; }
+  .main { width: 100%; }
+}
+@media (max-width: 680px) {
+  .app { padding: 10px; }
+  .toolbar { grid-template-columns: 1fr; }
+  .page-head { align-items: flex-start; flex-direction: column; }
+  .page-actions, .page-actions .btn { width: 100%; }
+  .table-foot { align-items: flex-start; flex-direction: column; }
+  .pager, .pager .btn { width: 100%; }
+  .user-chip .who { display: none; }
+  .topbar { padding: 10px 12px; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <a class="sidebar-brand" href="admin_dashboard.html">
+      <span class="brand-mark" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8.5" fill="currentColor"/><g stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8.5v15"/><path d="M10 12h12"/><path d="M10 12 6.8 19h6.4L10 12z"/><path d="M18 12l-3.2 7h6.4L18 12z"/><path d="M11.5 23.5h9"/></g></svg></span>
+      <span class="brand-word">ADMIN<span>/PANEL</span></span>
+    </a>
+    <nav class="sidebar-nav" aria-label="Admin navigation">
+      <div class="nav-label">Menu</div>
+      <a class="nav-item" href="admin_dashboard.html">Dashboard</a>
+      <a class="nav-item" href="users.html">Users</a>
+      <a class="nav-item" href="lawyer_verifications.html">Lawyer Verification</a>
+      <div class="nav-label">Catalog</div>
+      <a class="nav-item" href="practice_areas.html">Practice Areas</a>
+      <a class="nav-item" href="jurisdictions.html">Jurisdictions</a>
+      <a class="nav-item" href="courts.html">Courts</a>
+      <div class="nav-label">Verification</div>
+      <a class="nav-item" href="lawyer_verifications.html">Verification Queue</a>
+      <a class="nav-item active" href="verification_history.html" aria-current="page">Verification History</a>
+      <div class="nav-label">Moderation</div>
+      <a class="nav-item" href="content_reports.html">Content Reports</a>
+      <div class="nav-label">Boost management</div>
+      <a class="nav-item" href="boost_plans.html">Boost Plans</a>
+      <a class="nav-item" href="boost_purchases.html">Boost Purchases</a>
+      <div class="nav-label">Support</div>
+      <a class="nav-item" href="support_tickets.html">Support Tickets</a>
+      <div class="nav-label">General</div>
+      <button class="nav-item" type="button" id="logoutBtn">Logout</button>
+    </nav>
+    <div class="sidebar-foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2.2"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></svg><span>Secure admin session</span></div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <main class="main">
+    <header class="topbar">
+      <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <span class="topbar-tag">Verification</span>
+      <div class="topbar-right"><div class="user-chip"><span class="avatar" id="userAvatar">A</span><span class="who"><b id="userName">admin</b><span id="userRole">ADMIN</span></span></div></div>
+    </header>
+
+    <section class="page-head">
+      <div><h1>Lawyer verification history</h1><p class="sub">Review recorded admin actions for one lawyer profile. Enter a lawyer profile ID to load its history.</p></div>
+      <div class="page-actions">
+        <button class="btn btn-outline" id="refreshBtn" type="button" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 12a8.6 8.6 0 1 1-2.5-6.1"/><path d="M20.6 3.5v6h-6"/></svg>
+          Refresh
+        </button>
+      </div>
+    </section>
+
+    <div class="notice" role="note">
+      The backend history API is scoped to a single lawyer profile and returns admin actions only. It does not expose credential IDs/types/statuses, admin IDs, profile submission dates, date-range filters, or server pagination. Search, action filtering, and pagination below apply only to the loaded profile’s history records.
+    </div>
+
+    <form class="card toolbar" id="filterForm">
+      <div class="field">
+        <label class="field-label" for="lawyerIdInput">Lawyer profile ID</label>
+        <input class="input" id="lawyerIdInput" type="number" min="1" step="1" required inputmode="numeric" placeholder="Enter profile ID">
+      </div>
+      <div class="field">
+        <label class="field-label" for="searchInput">Search loaded history</label>
+        <input class="input" id="searchInput" type="search" placeholder="Action, admin, note or date" autocomplete="off" disabled>
+      </div>
+      <div>
+        <button class="btn btn-primary" id="loadHistoryBtn" type="submit">Load history</button>
+      </div>
+    </form>
+
+    <section class="card toolbar" aria-label="Loaded history filters">
+      <div class="field">
+        <label class="field-label" for="actionFilter">Action / decision</label>
+        <select class="select" id="actionFilter" disabled>
+          <option value="">All actions</option>
+          <option value="APPROVE">APPROVE</option>
+          <option value="REJECT">REJECT</option>
+          <option value="REQUEST_INFO">REQUEST_INFO</option>
+          <option value="SUSPEND">SUSPEND</option>
+          <option value="ACTIVATE">ACTIVATE</option>
+          <option value="REMOVE">REMOVE</option>
+        </select>
+      </div>
+      <p class="muted">Action filter applies to the history currently loaded for the selected lawyer.</p>
+    </section>
+
+    <section class="card" aria-label="Verification history">
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th scope="col">History ID</th>
+            <th scope="col">Lawyer ID</th>
+            <th scope="col">Action / decision</th>
+            <th scope="col">Admin account</th>
+            <th scope="col">Reason / note</th>
+            <th scope="col">Recorded at</th>
+            <th scope="col">Profile</th>
+          </tr></thead>
+          <tbody id="historyRows"><tr><td colspan="7"><div class="state"><h2>Enter a lawyer profile ID</h2><p>History is available one lawyer profile at a time.</p></div></td></tr></tbody>
+        </table>
+      </div>
+      <footer class="table-foot">
+        <span id="resultsSummary" aria-live="polite"></span>
+        <nav class="pager" id="pagination" aria-label="History pages"></nav>
+      </footer>
+    </section>
+  </main>
+</div>
+<script>
+(function () {
+  "use strict";
+
+  var ADMIN_API = "http://localhost:18081/api/admin/v1";
+  var TOKEN_KEY = "adminAccessToken";
+  var USERNAME_KEY = "adminUsername";
+  var ROLE_KEY = "adminRole";
+  var PAGE_SIZE = 10;
+  var state = { lawyerId: "", entries: [], page: 0, request: 0 };
+
+  function byId(id) { return document.getElementById(id); }
+  function esc(value) {
+    return String(value == null ? "" : value).replace(/[&<>"']/g, function (char) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char];
+    });
+  }
+  function token() { return localStorage.getItem(TOKEN_KEY); }
+  function clearSession() {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USERNAME_KEY);
+    localStorage.removeItem(ROLE_KEY);
+  }
+  function logout() {
+    clearSession();
+    window.location.replace("admin_login.html");
+  }
+  function ApiError(message, status) {
+    this.name = "ApiError";
+    this.message = message;
+    this.status = status || 0;
+  }
+  ApiError.prototype = Object.create(Error.prototype);
+  ApiError.prototype.constructor = ApiError;
+
+  async function api(url) {
+    var response;
+    try {
+      response = await fetch(url, { headers: token() ? { Authorization: "Bearer " + token() } : {} });
+    } catch (error) {
+      throw new ApiError("Cannot reach the API server. Check that the backend is running.", 0);
+    }
+    if (response.status === 401) {
+      clearSession();
+      window.location.replace("admin_login.html");
+      throw new ApiError("Session expired. Please sign in again.", 401);
+    }
+    if (response.status === 403) throw new ApiError("Access denied. Admin permission required.", 403);
+    var payload = null;
+    try { payload = await response.json(); } catch (error) { payload = null; }
+    if (!response.ok) {
+      throw new ApiError(payload && (payload.message || payload.error) ||
+        "Request failed with status " + response.status + ".", response.status);
+    }
+    if (payload && payload.success === false) {
+      throw new ApiError(payload.message || "The API could not complete the request.", response.status);
+    }
+    return payload && Object.prototype.hasOwnProperty.call(payload, "data") ? payload.data : payload;
+  }
+
+  function formatDate(value) {
+    if (!value) return "—";
+    var date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "—";
+    return date.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) +
+      ", " + date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+  }
+  function actionBadge(action) {
+    var value = String(action || "UNKNOWN");
+    var modifier = value === "APPROVE" ? "badge-approved" :
+      value === "REJECT" ? "badge-rejected" :
+        value === "REQUEST_INFO" ? "badge-pending" : "";
+    return '<span class="badge ' + modifier + '">' + esc(value.replace(/_/g, " ")) + "</span>";
+  }
+  function fillUserChip() {
+    var name = localStorage.getItem(USERNAME_KEY) || "admin";
+    var parts = name.trim().split(/\s+/);
+    byId("userName").textContent = name;
+    byId("userRole").textContent = localStorage.getItem(ROLE_KEY) || "ADMIN";
+    byId("userAvatar").textContent = ((parts[0] || "A")[0] + (parts.length > 1 ? parts[parts.length - 1][0] : "")).toUpperCase();
+  }
+  function showState(title, message, isError) {
+    byId("historyRows").innerHTML = '<tr><td colspan="7"><div class="state' +
+      (isError ? " error" : "") + '"' + (isError ? ' role="alert"' : ' role="status"') +
+      "><h2>" + esc(title) + "</h2><p>" + esc(message) + "</p>" +
+      (isError ? '<button class="btn btn-outline" type="button" id="retryBtn">Retry</button>' : "") +
+      "</div></td></tr>";
+    byId("resultsSummary").textContent = "";
+    byId("pagination").replaceChildren();
+    var retry = byId("retryBtn");
+    if (retry) retry.addEventListener("click", loadHistory);
+  }
+  function filteredEntries() {
+    var query = byId("searchInput").value.trim().toLowerCase();
+    var action = byId("actionFilter").value;
+    return state.entries.filter(function (entry) {
+      var matchesAction = !action || entry.actionType === action;
+      var searchable = [entry.id, state.lawyerId, entry.actionType, entry.adminUsername, entry.note, entry.createdAt]
+        .join(" ").toLowerCase();
+      return matchesAction && (!query || searchable.includes(query));
+    });
+  }
+  function renderPagination(total) {
+    var container = byId("pagination");
+    container.replaceChildren();
+    var pages = Math.ceil(total / PAGE_SIZE);
+    if (pages < 2) return;
+    var previous = document.createElement("button");
+    previous.type = "button";
+    previous.className = "btn btn-outline";
+    previous.textContent = "Previous";
+    previous.disabled = state.page === 0;
+    previous.addEventListener("click", function () { state.page -= 1; renderHistory(); });
+    var label = document.createElement("span");
+    label.textContent = "Page " + (state.page + 1) + " of " + pages;
+    label.setAttribute("aria-live", "polite");
+    var next = document.createElement("button");
+    next.type = "button";
+    next.className = "btn btn-outline";
+    next.textContent = "Next";
+    next.disabled = state.page >= pages - 1;
+    next.addEventListener("click", function () { state.page += 1; renderHistory(); });
+    container.append(previous, label, next);
+  }
+  function renderHistory() {
+    var entries = filteredEntries();
+    var rows = byId("historyRows");
+    if (!entries.length) {
+      var filtered = byId("searchInput").value.trim() || byId("actionFilter").value;
+      rows.innerHTML = '<tr><td colspan="7"><div class="state"><h2>' +
+        (filtered ? "No history matches these filters" : "No recorded history") +
+        "</h2><p>" + (filtered ? "Adjust the local search or action filter and try again." :
+          "No administrative verification actions are recorded for this lawyer profile.") +
+        "</p></div></td></tr>";
+    } else {
+      var start = state.page * PAGE_SIZE;
+      var pageRows = entries.slice(start, start + PAGE_SIZE);
+      rows.innerHTML = pageRows.map(function (entry) {
+        return "<tr>" +
+          '<td><span class="cell-primary mono">#' + esc(entry.id) + "</span></td>" +
+          '<td><span class="cell-primary">#' + esc(state.lawyerId) + "</span></td>" +
+          "<td>" + actionBadge(entry.actionType) + "</td>" +
+          '<td><span class="cell-primary">' + esc(entry.adminUsername || "—") + "</span></td>" +
+          '<td><span class="cell-primary">' + esc(entry.note || "—") + "</span></td>" +
+          '<td><span class="cell-primary">' + esc(formatDate(entry.createdAt)) + "</span></td>" +
+          '<td><a class="btn btn-outline" aria-label="Open lawyer verification profile ' +
+          esc(state.lawyerId) + '" href="lawyer_verification_detail.html?id=' +
+          encodeURIComponent(state.lawyerId) + '">Open profile</a></td></tr>';
+      }).join("");
+    }
+    var from = entries.length ? state.page * PAGE_SIZE + 1 : 0;
+    var to = Math.min(entries.length, (state.page + 1) * PAGE_SIZE);
+    byId("resultsSummary").textContent = "Lawyer profile #" + state.lawyerId + " · Showing " +
+      from + "–" + to + " of " + entries.length + " matching history records";
+    renderPagination(entries.length);
+  }
+  async function loadHistory(event) {
+    if (event) event.preventDefault();
+    var input = byId("lawyerIdInput");
+    var lawyerId = input.value.trim();
+    if (!/^[1-9]\d*$/.test(lawyerId)) {
+      input.setCustomValidity("Enter a positive lawyer profile ID.");
+      input.reportValidity();
+      input.setCustomValidity("");
+      return;
+    }
+    var request = ++state.request;
+    state.lawyerId = lawyerId;
+    state.page = 0;
+    byId("refreshBtn").disabled = true;
+    byId("loadHistoryBtn").disabled = true;
+    byId("searchInput").disabled = true;
+    byId("actionFilter").disabled = true;
+    showState("Loading history…", "Fetching recorded actions for this profile.", false);
+    try {
+      var data = await api(ADMIN_API + "/verifications/history?lawyerProfileId=" + encodeURIComponent(lawyerId));
+      if (request !== state.request) return;
+      if (!Array.isArray(data)) throw new ApiError("The history API returned an unexpected response.", 0);
+      state.entries = data;
+      byId("searchInput").disabled = false;
+      byId("actionFilter").disabled = false;
+      byId("refreshBtn").disabled = false;
+      renderHistory();
+    } catch (error) {
+      if (request !== state.request) return;
+      state.entries = [];
+      showState(error.status === 404 ? "Lawyer profile not found" : "Could not load history",
+        error.message || "Please try again.", true);
+    } finally {
+      if (request === state.request) {
+        byId("loadHistoryBtn").disabled = false;
+        byId("refreshBtn").disabled = false;
+      }
+    }
+  }
+
+  if (!token()) {
+    window.location.replace("admin_login.html");
+    return;
+  }
+  fillUserChip();
+  byId("logoutBtn").addEventListener("click", logout);
+  byId("filterForm").addEventListener("submit", loadHistory);
+  byId("refreshBtn").addEventListener("click", loadHistory);
+  byId("searchInput").addEventListener("input", function () { state.page = 0; renderHistory(); });
+  byId("actionFilter").addEventListener("change", function () { state.page = 0; renderHistory(); });
+  var sidebar = byId("sidebar");
+  byId("menuBtn").addEventListener("click", function () { sidebar.classList.toggle("open"); });
+  byId("sidebarOverlay").addEventListener("click", function () { sidebar.classList.remove("open"); });
+
+  var initialId = new URLSearchParams(window.location.search).get("lawyerProfileId");
+  if (initialId && /^[1-9]\d*$/.test(initialId)) {
+    byId("lawyerIdInput").value = initialId;
+    loadHistory();
+  }
+})();
+</script>
+<script>(function(){var nav=document.querySelector(".sidebar-nav"),purchase=nav&&nav.querySelector('a[href="boost_purchases.html"]');if(!purchase||nav.querySelector("[data-invoice-metadata-nav]"))return;var link=document.createElement("a");link.className="nav-item";link.href="invoices.html";link.textContent="Invoice Metadata";link.setAttribute("data-invoice-metadata-nav","");purchase.insertAdjacentElement("afterend",link);})();</script>
+</body>
+</html>

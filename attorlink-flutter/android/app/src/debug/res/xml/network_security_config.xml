@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Debug builds support explicit local emulator/USB/LAN API endpoints.
+         ApiConfig additionally rejects public HTTP endpoints. Release/profile
+         use the main HTTPS-only resource. No certificate validation bypass. -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors><certificates src="system" /></trust-anchors>
+    </base-config>
+</network-security-config>

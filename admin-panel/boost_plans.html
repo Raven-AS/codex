@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Manage lawyer boost plans.">
+<title>Boost Plans - Admin Panel</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#fff;--ink:#000;--bg:#f1f1f1;--wash:#f7f7f7;--hover:#f0f0f0;--line:#e8e8e8;--line-strong:#d8d8d8;--muted:#6b6b6b;--muted-2:#8f8f8f;--font:"Instrument Sans","Helvetica Neue",Helvetica,"Segoe UI",sans-serif;--mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;--sidebar-w:248px}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}body{margin:0;color:var(--ink);background:var(--bg);font:15px/1.5 var(--font);-webkit-font-smoothing:antialiased}a{color:inherit}button,input,textarea{font:inherit}button{cursor:pointer}[hidden]{display:none!important}h1,h2,p{margin:0}h1{font-size:clamp(26px,3vw,33px);line-height:1.12;letter-spacing:-.025em}h2{font-size:19px;line-height:1.25;letter-spacing:-.015em}.muted{color:var(--muted)}.mono{font-family:var(--mono);font-size:.92em}
+.app{display:flex;gap:18px;min-height:100vh;padding:18px}.sidebar{position:sticky;top:18px;display:flex;flex:0 0 var(--sidebar-w);flex-direction:column;height:calc(100vh - 36px);overflow:hidden;border:1px solid var(--line);border-radius:22px;background:var(--paper);z-index:20}.sidebar-brand{display:flex;align-items:center;gap:11px;padding:22px;text-decoration:none}.brand-mark{display:grid;width:30px;height:30px;place-items:center;border-radius:9px;background:var(--ink);color:#fff}.brand-word{font-size:16.5px;font-weight:700;letter-spacing:.06em}.brand-word span{color:var(--muted-2);font-weight:500}.sidebar-nav{flex:1;overflow-y:auto;padding:4px 14px 14px}.nav-label{padding:16px 10px 8px;color:var(--muted-2);font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}.nav-item{display:flex;align-items:center;gap:11px;width:100%;margin-bottom:3px;padding:10.5px 12px;border:0;border-radius:12px;background:transparent;color:var(--ink);font-size:14.5px;text-align:left;text-decoration:none}.nav-item:hover,.nav-item.active{background:var(--hover)}.nav-item.active{font-weight:700}.sidebar-foot{display:flex;align-items:center;gap:9px;padding:15px 22px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}.sidebar-overlay{display:none;position:fixed;inset:0;background:#0006;z-index:15}.sidebar.open~.sidebar-overlay{display:block}
+.main{display:flex;flex:1;min-width:0;flex-direction:column;gap:18px}.topbar{display:flex;align-items:center;justify-content:space-between;min-height:62px;padding:11px 16px;border-radius:18px;background:var(--paper)}.topbar-tag{color:var(--muted-2);font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase}.user-chip{display:flex;align-items:center;gap:12px}.avatar{display:grid;width:38px;height:38px;place-items:center;border:1px solid var(--ink);border-radius:50%;background:var(--ink);color:var(--paper);font-size:13px;font-weight:700}.who b,.who span{display:block}.who b{font-size:14px;line-height:1.2}.who span{color:var(--muted);font-size:11px;font-weight:600;letter-spacing:.1em}.menu-btn{display:none!important}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}.sub{max-width:680px;margin-top:7px;color:var(--muted);font-size:14.5px}.page-actions{display:flex;gap:10px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border:1px solid transparent;border-radius:999px;background:transparent;color:var(--ink);font-size:14px;font-weight:600;text-decoration:none;white-space:nowrap}.btn:focus-visible,.icon-btn:focus-visible,.nav-item:focus-visible{outline:2px solid var(--ink);outline-offset:2px}.btn-primary{background:var(--ink);color:var(--paper)}.btn-outline{border-color:var(--line-strong);background:var(--paper)}.btn-outline:hover{border-color:var(--ink);background:var(--wash)}.btn[disabled]{cursor:wait;opacity:.55}.icon-btn{display:inline-grid;width:38px;height:38px;place-items:center;border:1px solid var(--line-strong);border-radius:50%;background:var(--paper)}.card{border-radius:20px;background:var(--paper)}.notice{padding:14px 17px;border:1px solid var(--line);border-radius:14px;background:var(--wash);color:var(--muted);font-size:13px}.notice strong{color:var(--ink)}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;text-align:left}th{padding:13px 18px;border-bottom:1px solid var(--line);color:var(--muted);font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}td{padding:16px 18px;border-bottom:1px solid var(--line);vertical-align:middle}tbody tr:last-child td{border-bottom:0}tbody tr:hover{background:#fafafa}.cell-primary{display:block;font-weight:600}.cell-secondary{display:block;margin-top:3px;color:var(--muted);font-size:12.5px}.badge{display:inline-flex;min-height:25px;align-items:center;padding:0 10px;border:1px solid var(--line-strong);border-radius:999px;background:var(--paper);font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}.badge-active{border-color:var(--ink);background:var(--ink);color:var(--paper)}.badge-inactive{border-style:dashed}.row-actions{display:flex;gap:7px;align-items:center;white-space:nowrap}.small-btn{min-height:34px;padding:0 12px;font-size:12.5px}.table-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}.pager{display:flex;align-items:center;gap:8px}.pager .btn{min-height:36px;padding:0 12px;font-size:13px}.state{display:flex;min-height:220px;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:28px;text-align:center}.state h2{font-size:17px}.state p{max-width:520px;color:var(--muted)}.state.error{color:#8e1c14}.spin{width:22px;height:22px;border:2px solid var(--line-strong);border-top-color:var(--ink);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+dialog{width:min(560px,calc(100% - 28px));max-height:calc(100dvh - 28px);padding:0;border:1px solid var(--line);border-radius:20px;background:var(--paper);color:var(--ink);box-shadow:0 24px 80px #0003}dialog::backdrop{background:#0007}.dialog-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding:22px 24px;border-bottom:1px solid var(--line)}.dialog-head p{margin-top:5px;color:var(--muted);font-size:13px}.dialog-body{display:grid;grid-template-columns:1fr 1fr;gap:15px;padding:22px 24px}.field{display:flex;min-width:0;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}.field-label{color:var(--muted);font-size:11.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase}.input,.textarea{width:100%;min-height:44px;padding:10px 13px;border:1px solid var(--line-strong);border-radius:11px;background:var(--paper);color:var(--ink)}.textarea{min-height:90px;resize:vertical}.input:focus,.textarea:focus{outline:2px solid var(--ink);outline-offset:1px}.field-hint{color:var(--muted);font-size:12px}.form-error{grid-column:1/-1;padding:10px 12px;border-radius:10px;background:#fff2f0;color:#8e1c14;font-size:13px}.dialog-actions{display:flex;justify-content:flex-end;gap:9px;padding:16px 24px;border-top:1px solid var(--line)}
+@media(max-width:900px){.app{gap:12px;padding:12px}.sidebar{flex-basis:220px}.dialog-body{padding:18px}}@media(max-width:700px){.app{display:block;padding:10px}.sidebar{position:fixed;inset:10px auto 10px 10px;width:min(290px,calc(100vw - 42px));height:auto;max-height:calc(100dvh - 20px);transform:translateX(calc(-100% - 14px));transition:transform .2s ease}.sidebar.open{transform:translateX(0)}.main{gap:13px}.menu-btn{display:inline-grid!important}.topbar{gap:10px;padding:9px 12px}.page-head{align-items:flex-start}.page-actions{width:100%}.page-actions .btn{flex:1}.table-foot{align-items:flex-start;flex-direction:column}.pager{width:100%;justify-content:space-between}.dialog-body{grid-template-columns:1fr}.field.full,.form-error{grid-column:auto}.dialog-head,.dialog-body{padding:17px}.dialog-actions{padding:14px 17px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <a class="sidebar-brand" href="admin_dashboard.html"><span class="brand-mark" aria-hidden="true">A</span><span class="brand-word">ADMIN<span>/PANEL</span></span></a>
+    <nav class="sidebar-nav" aria-label="Admin navigation">
+      <div class="nav-label">Menu</div><a class="nav-item" href="admin_dashboard.html">Dashboard</a><a class="nav-item" href="users.html">Users</a><a class="nav-item" href="lawyer_verifications.html">Lawyer Verification</a>
+      <div class="nav-label">Catalog</div><a class="nav-item" href="practice_areas.html">Practice Areas</a><a class="nav-item" href="jurisdictions.html">Jurisdictions</a><a class="nav-item" href="courts.html">Courts</a>
+      <div class="nav-label">Verification</div><a class="nav-item" href="lawyer_verifications.html">Verification Queue</a><a class="nav-item" href="verification_history.html">Verification History</a>
+      <div class="nav-label">Moderation</div><a class="nav-item" href="content_reports.html">Content Reports</a>
+      <div class="nav-label">Boost management</div><a class="nav-item active" href="boost_plans.html" aria-current="page">Boost Plans</a><a class="nav-item" href="boost_purchases.html">Boost Purchases</a><a class="nav-item" href="invoices.html">Invoice Metadata</a>
+      <div class="nav-label">Support</div><a class="nav-item" href="support_tickets.html">Support Tickets</a>
+      <div class="nav-label">General</div><button class="nav-item" id="logoutBtn" type="button">Logout</button>
+    </nav>
+    <div class="sidebar-foot">Secure admin session</div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <main class="main">
+    <header class="topbar"><button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><span class="topbar-tag">Boost management</span><div class="user-chip"><span class="avatar" id="userAvatar">A</span><span class="who"><b id="userName">admin</b><span id="userRole">ADMIN</span></span></div></header>
+    <section class="page-head"><div><h1>Boost plans</h1><p class="sub">Create and maintain the lawyer boost plans available for purchase.</p></div><div class="page-actions"><button class="btn btn-outline" id="refreshBtn" type="button">Refresh</button><button class="btn btn-primary" id="createBtn" type="button">Create plan</button></div></section>
+    <div class="notice" role="note">New plans are created as <strong>ACTIVE</strong>. The backend generates the plan code from its name. Activation controls are limited to the supported activate/deactivate actions.</div>
+    <section class="card" aria-label="Boost plans">
+      <div class="table-wrap"><table><thead><tr><th scope="col">Plan</th><th scope="col">Price</th><th scope="col">Duration</th><th scope="col">Status</th><th scope="col">Display order</th><th scope="col">Updated</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead><tbody id="planRows"><tr><td colspan="7"><div class="state" role="status"><span class="spin" aria-hidden="true"></span><h2>Loading plans</h2></div></td></tr></tbody></table></div>
+      <footer class="table-foot"><span id="resultsSummary" aria-live="polite"></span><nav class="pager" id="pagination" aria-label="Plan pages"></nav></footer>
+    </section>
+  </main>
+</div>
+<dialog id="planDialog" aria-labelledby="dialogTitle">
+  <form id="planForm" novalidate>
+    <div class="dialog-head"><div><h2 id="dialogTitle">Create boost plan</h2><p id="dialogDescription">Enter the plan details. Required fields are validated before saving.</p></div><button class="icon-btn" id="closeDialogBtn" type="button" aria-label="Close dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+    <div class="dialog-body">
+      <div class="field full"><label class="field-label" for="planName">Name</label><input class="input" id="planName" name="name" maxlength="120" required autocomplete="off"></div>
+      <div class="field full"><label class="field-label" for="planDescription">Description</label><textarea class="textarea" id="planDescription" name="description" maxlength="1000"></textarea><span class="field-hint">Up to 1,000 characters.</span></div>
+      <div class="field"><label class="field-label" for="durationDays">Duration (days)</label><input class="input" id="durationDays" name="durationDays" type="number" min="1" step="1" required></div>
+      <div class="field"><label class="field-label" for="planPrice">Price</label><input class="input" id="planPrice" name="price" type="number" min="0.01" step="0.01" required></div>
+      <div class="field"><label class="field-label" for="currency">Currency</label><input class="input" id="currency" name="currency" maxlength="3" pattern="[A-Za-z]{3}" required value="BDT" autocomplete="off"></div>
+      <div class="field"><label class="field-label" for="displayOrder">Display order</label><input class="input" id="displayOrder" name="displayOrder" type="number" min="0" step="1" required value="0"></div>
+      <div id="formError" class="form-error" role="alert" hidden></div>
+    </div>
+    <div class="dialog-actions"><button class="btn btn-outline" id="cancelDialogBtn" type="button">Cancel</button><button class="btn btn-primary" id="savePlanBtn" type="submit">Create plan</button></div>
+  </form>
+</dialog>
+<script>
+(function(){
+  "use strict";
+  var API="http://localhost:18081/api/admin/v1",TOKEN="adminAccessToken",USERNAME="adminUsername",ROLE="adminRole",SIZE=20;
+  var state={page:0,totalPages:0,plans:[],loading:false,request:0,editingId:null,saving:false};
+  var $=function(id){return document.getElementById(id);};
+  function esc(value){return String(value==null?"":value).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+  function clearSession(){localStorage.removeItem(TOKEN);localStorage.removeItem(USERNAME);localStorage.removeItem(ROLE);}
+  function logout(){clearSession();window.location.replace("admin_login.html");}
+  function ApiError(message,status){this.name="ApiError";this.message=message;this.status=status||0;}
+  ApiError.prototype=Object.create(Error.prototype);ApiError.prototype.constructor=ApiError;
+  async function api(url,options){
+    options=options||{};var headers=new Headers(options.headers||{}),auth=localStorage.getItem(TOKEN);
+    if(auth)headers.set("Authorization","Bearer "+auth);
+    if(options.body)headers.set("Content-Type","application/json");
+    var response;try{response=await fetch(url,Object.assign({},options,{headers:headers}));}catch(e){throw new ApiError("Cannot reach the API server. Check that the backend is running.",0);}
+    if(response.status===401){clearSession();window.location.replace("admin_login.html");throw new ApiError("Session expired. Please sign in again.",401);}
+    var payload=null;try{payload=await response.json();}catch(e){payload=null;}
+    if(!response.ok){var message=payload&&(payload.message||payload.error);if(response.status===403)message="Access denied. Admin permission required.";else if(response.status===404)message="The requested plan was not found.";else if(response.status===409)message="The plan changed or conflicts with another update. Refresh and try again.";throw new ApiError(message||"Request failed with status "+response.status+".",response.status);}
+    if(payload&&payload.success===false)throw new ApiError(payload.message||"The API could not complete the request.",response.status);
+    return payload&&Object.prototype.hasOwnProperty.call(payload,"data")?payload.data:payload;
+  }
+  function date(value){if(!value)return"—";var d=new Date(value);return Number.isNaN(d.getTime())?"—":d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})+", "+d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});}
+  function money(amount,currency){if(amount==null)return"—";return esc(currency||"")+" "+esc(Number(amount).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}));}
+  function setState(title,message,error){$("planRows").innerHTML='<tr><td colspan="7"><div class="state'+(error?" error":"")+'" '+(error?'role="alert"':'role="status"')+'><h2>'+esc(title)+'</h2><p>'+esc(message||"")+'</p>'+(error?'<button class="btn btn-outline" id="retryBtn" type="button">Retry</button>':"")+"</div></td></tr>";$("resultsSummary").textContent="";$("pagination").replaceChildren();var retry=$("retryBtn");if(retry)retry.addEventListener("click",loadPlans);}
+  function statusBadge(status){var key=String(status||"UNKNOWN");var klass=key==="ACTIVE"?"badge-active":key==="INACTIVE"?"badge-inactive":"";return'<span class="badge '+klass+'">'+esc(key.replace(/_/g," "))+"</span>";}
+  function render(){
+    if(!state.plans.length){setState("No boost plans","No plans were returned for this page.");$("resultsSummary").textContent=state.totalPages?"No plans on this page.":"No plans have been created yet.";return;}
+    $("planRows").innerHTML=state.plans.map(function(plan){var id=esc(plan.id),status=String(plan.status||"");var activation=status==="ACTIVE"?"Deactivate":"Activate";return'<tr><td><span class="cell-primary">'+esc(plan.name||"Unnamed plan")+'</span><span class="cell-secondary">'+esc(plan.description||"No description")+'</span><span class="cell-secondary mono">ID '+id+"</span></td><td>"+money(plan.price,plan.currency)+'</td><td>'+esc(plan.durationDays==null?"—":plan.durationDays)+" days</td><td>"+statusBadge(status)+'</td><td>'+esc(plan.displayOrder==null?"—":plan.displayOrder)+'</td><td>'+date(plan.updatedAt)+'</td><td><div class="row-actions"><button class="btn btn-outline small-btn" type="button" data-action="edit" data-id="'+id+'">Edit</button><button class="btn btn-outline small-btn" type="button" data-action="toggle" data-id="'+id+'" data-status="'+esc(status)+'">'+activation+"</button></div></td></tr>";}).join("");
+    var p=state.page+1;var first=state.page*SIZE+1,last=first+state.plans.length-1;$("resultsSummary").textContent="Page "+p+" of "+state.totalPages+" · "+first+"–"+last+" of "+state.totalElements+" plans";
+    $("pagination").innerHTML='<button class="btn btn-outline" type="button" data-page="'+(state.page-1)+'" '+(state.page<=0?"disabled":"")+'>Previous</button><span>Page '+p+" / "+state.totalPages+'</span><button class="btn btn-outline" type="button" data-page="'+(state.page+1)+'" '+(state.page+1>=state.totalPages?"disabled":"")+'>Next</button>';
+  }
+  function setLoading(value){state.loading=value;$("refreshBtn").disabled=value;$("createBtn").disabled=value;if(value)setState("Loading plans","Fetching plans from the admin API.");}
+  async function loadPlans(){
+    if(state.loading)return;var request=++state.request;setLoading(true);
+    try{var data=await api(API+"/boost-plans?page="+state.page+"&size="+SIZE);if(request!==state.request)return;if(!data||!Array.isArray(data.content))throw new ApiError("The API returned an unexpected boost plan page.",0);state.plans=data.content;state.page=Number.isInteger(data.page)?data.page:state.page;state.totalPages=Number(data.totalPages)||0;state.totalElements=Number(data.totalElements)||0;render();}
+    catch(error){if(request===state.request)setState("Could not load plans",error.message,true);}
+    finally{if(request===state.request){state.loading=false;$("refreshBtn").disabled=false;$("createBtn").disabled=false;}}
+  }
+  function openForm(plan){
+    state.editingId=plan?plan.id:null;$("planForm").reset();$("formError").hidden=true;$("formError").textContent="";
+    $("dialogTitle").textContent=plan?"Edit boost plan":"Create boost plan";$("dialogDescription").textContent=plan?"Update the supported plan fields.":"Enter the plan details. New plans are created active.";
+    $("savePlanBtn").textContent=plan?"Save changes":"Create plan";
+    if(plan){$("planName").value=plan.name||"";$("planDescription").value=plan.description||"";$("durationDays").value=plan.durationDays;$("planPrice").value=plan.price;$("currency").value=plan.currency||"";$("displayOrder").value=plan.displayOrder;}
+    else{$("currency").value="BDT";$("displayOrder").value="0";}
+    $("planDialog").showModal();$("planName").focus();
+  }
+  function setSaving(value){state.saving=value;$("savePlanBtn").disabled=value;$("cancelDialogBtn").disabled=value;$("closeDialogBtn").disabled=value;}
+  async function savePlan(event){
+    event.preventDefault();var form=$("planForm");if(!form.reportValidity())return;
+    var name=$("planName").value.trim(),currency=$("currency").value.trim().toUpperCase(),duration=Number($("durationDays").value),price=Number($("planPrice").value),order=Number($("displayOrder").value),description=$("planDescription").value.trim();
+    if(!name||name.length>120||description.length>1000||!Number.isInteger(duration)||duration<1||!Number.isFinite(price)||price<=0||!/^[A-Z]{3}$/.test(currency)||!Number.isInteger(order)||order<0){$("formError").textContent="Review the required fields and allowed values before saving.";$("formError").hidden=false;return;}
+    var payload={name:name,description:description||null,durationDays:duration,price:price,currency:currency,displayOrder:order};setSaving(true);$("formError").hidden=true;
+    try{await api(API+"/boost-plans"+(state.editingId?"/"+encodeURIComponent(state.editingId):""),{method:state.editingId?"PUT":"POST",body:JSON.stringify(payload)});$("planDialog").close();if(state.page!==0&&!state.editingId)state.page=0;await loadPlans();}
+    catch(error){$("formError").textContent=error.message;$("formError").hidden=false;}
+    finally{setSaving(false);}
+  }
+  async function togglePlan(id,status){
+    var action=status==="ACTIVE"?"deactivate":"activate",verb=status==="ACTIVE"?"deactivate":"activate";
+    if(!window.confirm("Are you sure you want to "+verb+" this boost plan?"))return;
+    $("refreshBtn").disabled=true;
+    try{await api(API+"/boost-plans/"+encodeURIComponent(id)+"/"+action,{method:"PATCH"});await loadPlans();}
+    catch(error){setState("Could not update plan",error.message,true);}
+    finally{$("refreshBtn").disabled=false;}
+  }
+  function initShell(){
+    var name=localStorage.getItem(USERNAME)||"admin",parts=name.trim().split(/\s+/);$("userName").textContent=name;$("userRole").textContent=localStorage.getItem(ROLE)||"ADMIN";$("userAvatar").textContent=((parts[0]||"A")[0]+(parts.length>1?parts[parts.length-1][0]:"")).toUpperCase();
+    $("logoutBtn").addEventListener("click",logout);var sidebar=$("sidebar");$("menuBtn").addEventListener("click",function(){sidebar.classList.add("open");});$("sidebarOverlay").addEventListener("click",function(){sidebar.classList.remove("open");});
+    $("refreshBtn").addEventListener("click",loadPlans);$("createBtn").addEventListener("click",function(){openForm(null);});$("planForm").addEventListener("submit",savePlan);
+    $("closeDialogBtn").addEventListener("click",function(){$("planDialog").close();});$("cancelDialogBtn").addEventListener("click",function(){$("planDialog").close();});
+    $("planRows").addEventListener("click",function(event){var button=event.target.closest("button[data-action]");if(!button)return;var id=button.dataset.id;if(button.dataset.action==="edit"){var plan=state.plans.find(function(item){return String(item.id)===id;});if(plan)openForm(plan);}else if(button.dataset.action==="toggle")togglePlan(id,button.dataset.status);});
+    $("pagination").addEventListener("click",function(event){var button=event.target.closest("button[data-page]");if(!button||button.disabled)return;var next=Number(button.dataset.page);if(next>=0&&next<state.totalPages){state.page=next;loadPlans();}});
+  }
+  initShell();loadPlans();
+})();
+</script>
+</body>
+</html>
